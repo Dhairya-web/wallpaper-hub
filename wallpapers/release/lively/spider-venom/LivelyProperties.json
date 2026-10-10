@@ -1,0 +1,132 @@
+{
+  "showUi": {
+    "type": "checkbox",
+    "value": true,
+    "text": "Show interface",
+    "help": "Show or hide the title, descriptions, and interaction hint."
+  },
+  "trailId": {
+    "type": "dropdown",
+    "value": 1,
+    "text": "Trail",
+    "items": [
+      "MINIMAL REVEAL",
+      "MASKED WEB",
+      "CLASSIC RADIAL WEB"
+    ]
+  },
+  "headSize": {
+    "type": "slider",
+    "value": 100,
+    "min": 55,
+    "max": 160,
+    "step": 5,
+    "text": "Trail head size"
+  },
+  "trailPersistence": {
+    "type": "slider",
+    "value": 100,
+    "min": 55,
+    "max": 150,
+    "step": 5,
+    "text": "Trail persistence"
+  },
+  "effectIntensity": {
+    "type": "slider",
+    "value": 100,
+    "min": 40,
+    "max": 140,
+    "step": 5,
+    "text": "Effect intensity"
+  },
+  "glowStrength": {
+    "type": "slider",
+    "value": 100,
+    "min": 0,
+    "max": 150,
+    "step": 5,
+    "text": "Glow strength"
+  },
+  "backgroundDimming": {
+    "type": "slider",
+    "value": 42,
+    "min": 10,
+    "max": 70,
+    "step": 2,
+    "text": "Background dimming"
+  },
+  "performanceMode": {
+    "type": "dropdown",
+    "value": 1,
+    "text": "Performance",
+    "items": [
+      "quality",
+      "balanced",
+      "low power"
+    ]
+  },
+  "customTextSection": {
+    "type": "label",
+    "value": "Custom text"
+  },
+  "logoText": {
+    "type": "textbox",
+    "value": "SYMBIOTE",
+    "text": "Logo",
+    "help": "Maximum 40 characters."
+  },
+  "logoSubText": {
+    "type": "textbox",
+    "value": "WE ARE · VENOM",
+    "text": "Subtitle",
+    "help": "Maximum 80 characters."
+  },
+  "leftEyebrow": {
+    "type": "textbox",
+    "value": "FRIENDLY NEIGHBORHOOD",
+    "text": "Left eyebrow",
+    "help": "Maximum 50 characters."
+  },
+  "leftTitle": {
+    "type": "textbox",
+    "value": "SPIDER\\nMAN",
+    "text": "Left title",
+    "help": "Maximum 80 characters. Type \\n for a new line (up to 3 lines)."
+  },
+  "leftDesc": {
+    "type": "textbox",
+    "value": "With great power comes great responsibility. Swinging through the concrete jungle of New York, protecting the innocent.",
+    "text": "Left description",
+    "help": "Maximum 280 characters. Type \\n for a new line (up to 5 lines)."
+  },
+  "buttonText": {
+    "type": "textbox",
+    "value": "THWIP",
+    "text": "Button label",
+    "help": "Maximum 24 characters."
+  },
+  "rightEyebrow": {
+    "type": "textbox",
+    "value": "LETHAL PROTECTOR",
+    "text": "Right eyebrow",
+    "help": "Maximum 50 characters."
+  },
+  "rightTitle": {
+    "type": "textbox",
+    "value": "VENOM",
+    "text": "Right title",
+    "help": "Maximum 80 characters. Type \\n for a new line (up to 3 lines)."
+  },
+  "rightDesc": {
+    "type": "textbox",
+    "value": "A twisted reflection born of alien sludge. We are hungry, we are angry, and we will protect our own.",
+    "text": "Right description",
+    "help": "Maximum 280 characters. Type \\n for a new line (up to 5 lines)."
+  },
+  "hintText": {
+    "type": "textbox",
+    "value": "▸ MOVE ACROSS THE SCREEN ◂",
+    "text": "Interaction hint",
+    "help": "Maximum 80 characters."
+  }
+}

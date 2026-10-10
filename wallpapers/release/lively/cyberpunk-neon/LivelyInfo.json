@@ -1,0 +1,21 @@
+{
+  "AppVersion": "1.0.0.0",
+  "Title": "Cyberpunk - Neon Night",
+  "Thumbnail": "assets/images/base.webp",
+  "Preview": null,
+  "Desc": "Interactive Cyberpunk wallpaper with themed cursor trails.",
+  "Author": "Dhairya Lukha",
+  "License": null,
+  "Contact": "",
+  "Type": 1,
+  "FileName": "index.html",
+  "Arguments": null,
+  "IsAbsolutePath": false,
+  "Id": "cyberpunk-neon",
+  "Tags": [
+    "Cyberpunk",
+    "Interactive",
+    "Cursor Trail"
+  ],
+  "Version": 1
+}

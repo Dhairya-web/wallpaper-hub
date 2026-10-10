@@ -1,0 +1,2781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive Reveal Wallpaper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts are loaded dynamically -->
+  <script src="assets/data/config.js"></script>
+  <style>
+    :root {
+      --primary: #F4C430;
+      --secondary: #ff5a6e;
+      --logo-color: #F7D446;
+      --logo-stroke: 3px #0a1a3a;
+      --title-shadow: 3px 3px 0 #b3001a, 0 0 14px rgba(192, 0, 26, 0.5), 0 0 36px rgba(192, 0, 26, 0.3);
+      --right-title-shadow: 3px 3px 0 #6a3fb3, 0 0 16px rgba(180, 120, 255, 0.5), 0 0 40px rgba(180, 120, 255, 0.3);
+      --font-logo: 'Luckiest Guy', cursive;
+      --font-title: 'Bangers', cursive;
+      --font-eyebrow: 'Bebas Neue', sans-serif;
+      --font-desc: 'Cormorant Garamond', serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: #04060c;
+      overflow: hidden;
+    }
+
+    .hero {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      z-index: 20;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), var(--primary), transparent);
+    }
+
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .content {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .logo {
+      position: absolute;
+      top: 34px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(90vw, 960px);
+      min-width: 0;
+      z-index: 15;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .logo .op {
+      font-family: var(--font-logo);
+      font-size: clamp(40px, 4vw, 64px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      color: var(--logo-color);
+      -webkit-text-stroke: var(--logo-stroke);
+      text-shadow:
+        0 4px 0 #b3001a,
+        0 6px 0 #0a1a3a,
+        0 0 24px rgba(244, 196, 48, 0.45);
+    }
+
+    .logo .tag {
+      margin-top: 2px;
+      font-family: var(--font-eyebrow);
+      font-size: 15px;
+      letter-spacing: clamp(0.15em, 0.35vw, 0.5em);
+      color: #fff;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+      padding-left: 0.5em;
+    }
+
+    .left {
+      position: absolute;
+      bottom: 64px;
+      left: 64px;
+      width: 360px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .right {
+      position: absolute;
+      top: 54%;
+      right: 64px;
+      transform: translateY(-50%);
+      width: 380px;
+      min-width: 0;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: flex-end;
+    }
+
+    .eyebrow {
+      font-family: var(--font-eyebrow);
+      font-size: 15px;
+      letter-spacing: 0.35em;
+      color: var(--primary);
+      padding-left: 1.4rem;
+      position: relative;
+    }
+
+    .eyebrow::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1rem;
+      height: 1.5px;
+      background: var(--primary);
+    }
+
+    .right .eyebrow {
+      color: var(--secondary);
+      padding: 0 1.4rem 0 0;
+    }
+
+    .right .eyebrow::before {
+      left: auto;
+      right: 0;
+      background: var(--secondary);
+    }
+
+    .title {
+      font-family: var(--font-title);
+      font-size: clamp(44px, 5vw, 78px);
+      line-height: 0.92;
+      color: #fff;
+      letter-spacing: 0.02em;
+      text-shadow: var(--title-shadow);
+    }
+
+    .right .title {
+      font-size: clamp(38px, 4vw, 62px);
+      color: #fff;
+      text-shadow: var(--right-title-shadow);
+    }
+
+    .desc {
+      font-family: var(--font-desc);
+      font-style: italic;
+      font-size: 19px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .btn {
+      font-family: var(--font-eyebrow);
+      font-size: 17px;
+      letter-spacing: 0.2em;
+      padding: 14px 28px;
+      background: transparent;
+      color: #fff;
+      border: 2px solid var(--primary);
+      cursor: pointer;
+      align-self: flex-start;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      pointer-events: all;
+      transition: border-color .3s, color .3s;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--primary);
+      transform: translateX(-105%) skewX(-8deg);
+      transition: transform .38s cubic-bezier(.4, 0, .2, 1);
+      z-index: -1;
+    }
+
+    .btn:hover {
+      border-color: #ffe066;
+      color: #1a0a00;
+    }
+
+    .btn:hover::after {
+      transform: translateX(0) skewX(-8deg);
+    }
+
+    .hint {
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      z-index: 16;
+      font-family: var(--font-eyebrow);
+      letter-spacing: 0.25em;
+      font-size: 14px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 8px 18px;
+      border-radius: 999px;
+      max-width: calc(100vw - 40px);
+      text-align: center;
+      pointer-events: none;
+      transition: opacity .5s;
+    }
+
+    .logo .op,
+    .logo .tag,
+    .eyebrow,
+    .title,
+    .desc,
+    .btn,
+    .hint {
+      min-width: 0;
+      max-width: 100%;
+      white-space: pre-line;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      hyphens: auto;
+      unicode-bidi: plaintext;
+    }
+
+    .content, .logo, .hint {
+      transition: opacity 0.4s ease;
+    }
+    body.ui-hidden .content,
+    body.ui-hidden .logo,
+    body.ui-hidden .hint {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
+    .hero[data-theme="aeren-sol"] .logo {
+      top: 38px;
+      left: 54px;
+      width: min(560px, calc(100vw - 108px));
+      transform: none;
+      text-align: left;
+    }
+
+    .hero[data-theme="aeren-sol"] .logo .op {
+      font-size: clamp(38px, 3.6vw, 60px);
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 22px rgba(82, 208, 211, 0.22);
+    }
+
+    .hero[data-theme="aeren-sol"] .logo .tag {
+      padding-left: 0;
+      letter-spacing: clamp(0.12em, 0.26vw, 0.34em);
+    }
+
+    .hero[data-theme="aeren-sol"] .left {
+      left: 54px;
+      bottom: 58px;
+      width: min(390px, calc(48vw - 70px));
+    }
+
+    .hero[data-theme="aeren-sol"] .right {
+      top: 190px;
+      right: auto;
+      left: 54px;
+      width: min(350px, calc(45vw - 70px));
+      transform: none;
+      text-align: left;
+      align-items: flex-start;
+    }
+
+    .hero[data-theme="aeren-sol"] .right .eyebrow {
+      padding: 0 0 0 1.4rem;
+    }
+
+    .hero[data-theme="aeren-sol"] .right .eyebrow::before {
+      right: auto;
+      left: 0;
+    }
+
+    .hero[data-theme="aeren-sol"] .title,
+    .hero[data-theme="aeren-sol"] .right .title {
+      font-size: clamp(36px, 3.8vw, 60px);
+      letter-spacing: 0.045em;
+    }
+
+    @media (max-width:680px) {
+      .logo .op {
+        font-size: 38px;
+      }
+
+      .logo .tag {
+        font-size: 11px;
+        letter-spacing: 0.3em;
+      }
+
+      .left {
+        left: 22px;
+        bottom: 34px;
+        width: 62%;
+      }
+
+      .right {
+        right: 22px;
+        width: 58%;
+      }
+
+      .title {
+        font-size: 42px;
+      }
+
+      .right .title {
+        font-size: 34px;
+      }
+
+      .desc {
+        font-size: 15px;
+      }
+
+      .btn {
+        font-size: 14px;
+        padding: 11px 18px;
+      }
+
+      .hero[data-theme="aeren-sol"] .logo {
+        top: 24px;
+        left: 22px;
+        width: calc(100vw - 44px);
+      }
+
+      .hero[data-theme="aeren-sol"] .right {
+        top: 142px;
+        right: auto;
+        left: 22px;
+        width: 62%;
+      }
+
+      .hero[data-theme="aeren-sol"] .left {
+        left: 22px;
+        bottom: 34px;
+        width: 62%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero" id="hero">
+    <canvas class="hero-canvas" id="cv"></canvas>
+
+    <div class="logo">
+      <div class="op" id="ui-logoText"></div>
+      <div class="tag" id="ui-logoSubText"></div>
+    </div>
+
+    <div class="content">
+      <div class="left">
+        <span class="eyebrow" id="ui-leftEyebrow"></span>
+        <h1 class="title" id="ui-leftTitle"></h1>
+        <p class="desc" id="ui-leftDesc"></p>
+        <button class="btn" id="ui-buttonText" type="button"></button>
+      </div>
+      <div class="right">
+        <span class="eyebrow" id="ui-rightEyebrow"></span>
+        <h1 class="title" id="ui-rightTitle"></h1>
+        <p class="desc" id="ui-rightDesc"></p>
+      </div>
+    </div>
+
+    <div class="hint" id="hint"></div>
+  </div>
+
+  <script>
+    (function () {
+      // --- DOM Elements ---
+      const hero = document.getElementById('hero');
+      const canvas = document.getElementById('cv');
+      // Lively's Chromium host can tear when `desynchronized` canvas rendering
+      // is combined with a second compositing canvas. Use the stable path.
+      const ctx = canvas.getContext('2d');
+      const hint = document.getElementById('hint');
+      const contentNodes = {
+        logoText: document.getElementById('ui-logoText'),
+        logoSubText: document.getElementById('ui-logoSubText'),
+        leftEyebrow: document.getElementById('ui-leftEyebrow'),
+        leftTitle: document.getElementById('ui-leftTitle'),
+        leftDesc: document.getElementById('ui-leftDesc'),
+        buttonText: document.getElementById('ui-buttonText'),
+        rightEyebrow: document.getElementById('ui-rightEyebrow'),
+        rightTitle: document.getElementById('ui-rightTitle'),
+        rightDesc: document.getElementById('ui-rightDesc'),
+        hintText: hint,
+      };
+      for (const node of Object.values(contentNodes)) node.dir = 'auto';
+
+      // --- Constants ---
+      let HEAD_RADIUS = 190;
+      const MAX_RENDER_PIXELS = APP_CONFIG.settings?.maxRenderPixels || 2560 * 1440;
+      const SETTINGS_SCHEMA_VERSION = 2;
+      const SETTINGS_STORAGE_KEY = 'interactive-wallpaper-settings-v2';
+      const LEGACY_SETTINGS_STORAGE_KEY = 'interactive-wallpaper-settings-v1';
+      const TEXT_FIELD_DEFINITIONS = APP_CONFIG.controls?.textFields || {};
+      const LIVELY_TEXT_PROPERTIES = Object.fromEntries(
+        Object.entries(TEXT_FIELD_DEFINITIONS)
+          .filter(([, definition]) => typeof definition?.propertyName === 'string')
+          .map(([fieldId, definition]) => [definition.propertyName, fieldId]),
+      );
+      const runtimeThemes = APP_CONFIG.themes.filter(theme =>
+        theme.enabled !== false || (
+          APP_CONFIG.build?.mode === 'development' &&
+          APP_CONFIG.build?.platform === 'browser' &&
+          theme.developmentPreview === true
+        )
+      );
+
+      if (!runtimeThemes.length) {
+        throw new Error('No enabled wallpaper themes are configured.');
+      }
+
+      // --- State ---
+      const mouse = { x: 0, y: 0 };
+      const smooth = { x: 0, y: 0 };
+      let trail = [];
+      let isPaused = false;
+      let animFrameId = null;
+      let renderScale = 1;
+      let lastFrameTime = 0;
+      let pointerInitialized = false;
+      let pointerActive = false;
+      let headLastActive = 0;
+      let activeTheme = runtimeThemes[0];
+      let activeTrailId = activeTheme.settings.defaults.trailId;
+      let activeSettings = {};
+      let trailHeadScale = 1;
+      let targetTrailHeadScale = 1;
+      let nextTrailPointId = 0;
+      let persistTextTimer = null;
+      let pendingTextPersistence = null;
+      let motionPreviewEnabled = true;
+      const livingMotionState = {
+        offsetX: 0,
+        offsetY: 0,
+        flowX: 0,
+        flowY: 0,
+        previousPointerX: 0,
+        previousPointerY: 0,
+        pointerReady: false,
+      };
+      let livingPetalParticles = [];
+      let livingMoteParticles = [];
+      let livingConstellationLinks = [];
+      let livingMistLayers = [];
+      const livingRegionBounds = new WeakMap();
+      const livingRegionMeshes = new WeakMap();
+
+      // --- Images ---
+      const bottom = new Image(); // mask reveal
+      const top = new Image(); // background
+      let imageLoadGeneration = 0;
+      let imagesReady = false;
+
+      // --- Apply Theme from Config ---
+      function getThemeById(themeId) {
+        return runtimeThemes.find(theme => theme.id === themeId) || runtimeThemes[0];
+      }
+
+      function getThemeTrails(theme) {
+        return Array.isArray(theme?.trails) ? theme.trails : [];
+      }
+
+      function getTrailOptions(themeId) {
+        return getThemeTrails(getThemeById(themeId)).map(trailDefinition => trailDefinition.id);
+      }
+
+      function getTrailDefinition(theme, trailId) {
+        return getThemeTrails(theme).find(trailDefinition => trailDefinition.id === trailId)
+          || getThemeTrails(theme)[0];
+      }
+
+      function getActiveTrailDefinition() {
+        return getTrailDefinition(activeTheme, activeTrailId);
+      }
+
+      function getThemeInteraction(theme = activeTheme) {
+        return theme.interaction;
+      }
+
+      function getThemeCapabilities(theme) {
+        return new Set(theme.settings?.capabilities || []);
+      }
+
+      function getThemeTextFields(theme) {
+        const fields = Array.isArray(theme.settings?.textFields) ? theme.settings.textFields : [];
+        return fields.filter(fieldId => Object.hasOwn(TEXT_FIELD_DEFINITIONS, fieldId));
+      }
+
+      function limitCodePoints(value, maximumLength) {
+        return Array.from(value).slice(0, maximumLength).join('');
+      }
+
+      function normalizeTextValue(value, definition, options = {}) {
+        if (typeof value !== 'string') return '';
+        let normalized = value.replace(/\r\n?/g, '\n');
+        if (options.decodeEscapedNewlines && definition.multiline) {
+          normalized = normalized.replace(/\\n/g, '\n');
+        }
+        normalized = normalized
+          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+          .replace(/\t/g, ' ');
+
+        if (!definition.multiline) {
+          normalized = normalized.replace(/[ \t\r\n]+/g, ' ').trim();
+        } else {
+          const lines = normalized.split('\n').map(line => line.replace(/ {2,}/g, ' ').trim());
+          const compactedLines = [];
+          for (const line of lines) {
+            const previousLine = compactedLines[compactedLines.length - 1];
+            if (line || previousLine !== '') compactedLines.push(line);
+          }
+          while (compactedLines[0] === '') compactedLines.shift();
+          while (compactedLines[compactedLines.length - 1] === '') compactedLines.pop();
+          const maximumLines = Number.isInteger(definition.maxLines) ? definition.maxLines : compactedLines.length;
+          normalized = compactedLines.slice(0, maximumLines).join('\n');
+        }
+
+        return limitCodePoints(normalized, definition.maxLength);
+      }
+
+      function sanitizeTextOverrides(theme, candidate = {}, options = {}) {
+        const capabilities = getThemeCapabilities(theme);
+        if (!capabilities.has('textCustomization') || !candidate || typeof candidate !== 'object' || Array.isArray(candidate)) {
+          return {};
+        }
+        const overrides = {};
+        for (const fieldId of getThemeTextFields(theme)) {
+          if (!Object.hasOwn(candidate, fieldId)) continue;
+          const definition = TEXT_FIELD_DEFINITIONS[fieldId];
+          const fallback = normalizeTextValue(theme.content?.[fieldId] || '', definition);
+          const normalized = normalizeTextValue(candidate[fieldId], definition, options);
+          if (definition.required && !normalized) continue;
+          if (normalized === fallback) continue;
+          overrides[fieldId] = normalized;
+        }
+        return overrides;
+      }
+
+      function resolveThemeContent(theme = activeTheme, overrides = activeSettings.textOverrides || {}) {
+        const resolved = {};
+        for (const [fieldId, node] of Object.entries(contentNodes)) {
+          void node;
+          const definition = TEXT_FIELD_DEFINITIONS[fieldId];
+          const fallback = definition
+            ? normalizeTextValue(theme.content?.[fieldId] || '', definition)
+            : String(theme.content?.[fieldId] || '');
+          resolved[fieldId] = Object.hasOwn(overrides, fieldId) ? overrides[fieldId] : fallback;
+        }
+        return resolved;
+      }
+
+      function renderThemeContent() {
+        const resolved = resolveThemeContent();
+        for (const [fieldId, node] of Object.entries(contentNodes)) {
+          const value = resolved[fieldId] || '';
+          node.textContent = value;
+          node.hidden = value.length === 0;
+        }
+      }
+
+      function clampControlValue(controlName, value, fallback) {
+        const definition = APP_CONFIG.controls?.[controlName];
+        const numericValue = Number(value);
+        if (!definition || !Number.isFinite(numericValue)) return fallback;
+        return Math.min(definition.max, Math.max(definition.min, numericValue));
+      }
+
+      function sanitizeThemeSettings(theme, candidate = {}) {
+        const defaults = theme.settings?.defaults || {};
+        const capabilities = getThemeCapabilities(theme);
+        const trailOptions = getTrailOptions(theme.id);
+        const fallbackTrailId = trailOptions.includes(defaults.trailId)
+          ? defaults.trailId
+          : trailOptions[0];
+        const settings = {
+          trailId: trailOptions.includes(candidate.trailId) ? candidate.trailId : fallbackTrailId,
+          artworkMotion: capabilities.has('artworkMotion')
+            ? (typeof candidate.artworkMotion === 'boolean'
+              ? candidate.artworkMotion
+              : defaults.artworkMotion !== false)
+            : false,
+          showUi: capabilities.has('uiVisibility')
+            ? (typeof candidate.showUi === 'boolean' ? candidate.showUi : defaults.showUi !== false)
+            : true,
+          showSettingsButton: capabilities.has('settingsButtonVisibility')
+            ? (typeof candidate.showSettingsButton === 'boolean'
+              ? candidate.showSettingsButton
+              : defaults.showSettingsButton !== false)
+            : false,
+          textOverrides: capabilities.has('textCustomization')
+            ? sanitizeTextOverrides(theme, candidate.textOverrides || {})
+            : {},
+        };
+
+        for (const controlName of ['headSize', 'trailPersistence', 'effectIntensity', 'glowStrength', 'backgroundDimming']) {
+          const fallback = Number(defaults[controlName]);
+          settings[controlName] = capabilities.has(controlName)
+            ? clampControlValue(controlName, candidate[controlName], fallback)
+            : fallback;
+        }
+
+        const performanceOptions = APP_CONFIG.controls?.performanceMode?.options || ['balanced'];
+        const requestedPerformance = candidate.performanceMode || defaults.performanceMode;
+        settings.performanceMode = capabilities.has('performanceMode') && performanceOptions.includes(requestedPerformance)
+          ? requestedPerformance
+          : (performanceOptions.includes(defaults.performanceMode) ? defaults.performanceMode : performanceOptions[0]);
+        return settings;
+      }
+
+      function createEmptyStoredSettings() {
+        return { schemaVersion: SETTINGS_SCHEMA_VERSION, themes: {} };
+      }
+
+      function readStorageValue(storageKey) {
+        try {
+          const rawValue = localStorage.getItem(storageKey);
+          if (!rawValue) return null;
+          const parsed = JSON.parse(rawValue);
+          return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function readStoredSettings() {
+        if (!APP_CONFIG.settings?.persistSettings) return createEmptyStoredSettings();
+        const current = readStorageValue(SETTINGS_STORAGE_KEY);
+        if (current?.schemaVersion === SETTINGS_SCHEMA_VERSION &&
+          current.themes &&
+          typeof current.themes === 'object' &&
+          !Array.isArray(current.themes)) {
+          return current;
+        }
+        const legacyThemes = readStorageValue(LEGACY_SETTINGS_STORAGE_KEY);
+        return {
+          schemaVersion: SETTINGS_SCHEMA_VERSION,
+          themes: legacyThemes || {},
+        };
+      }
+
+      function writeThemeSettings(themeId, settingsSnapshot) {
+        if (!APP_CONFIG.settings?.persistSettings || !themeId) return;
+        try {
+          const stored = readStoredSettings();
+          const trailDefaultRevision = getThemeById(themeId)?.settings?.trailDefaultRevision;
+          stored.themes[themeId] = {
+            ...settingsSnapshot,
+            ...(typeof trailDefaultRevision === 'string' && trailDefaultRevision
+              ? { trailDefaultRevision }
+              : {}),
+          };
+          localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(stored));
+          localStorage.removeItem(LEGACY_SETTINGS_STORAGE_KEY);
+        } catch (error) {
+          // Wallpaper hosts may disable storage. Runtime settings still work.
+        }
+      }
+
+      function flushScheduledThemeSettingsPersistence() {
+        clearTimeout(persistTextTimer);
+        persistTextTimer = null;
+        if (!pendingTextPersistence) return;
+        const pending = pendingTextPersistence;
+        pendingTextPersistence = null;
+        writeThemeSettings(pending.themeId, pending.settings);
+      }
+
+      function persistThemeSettings() {
+        if (!APP_CONFIG.settings?.persistSettings || !activeTheme) return;
+        flushScheduledThemeSettingsPersistence();
+        writeThemeSettings(activeTheme.id, {
+          ...activeSettings,
+          textOverrides: { ...(activeSettings.textOverrides || {}) },
+        });
+      }
+
+      function scheduleThemeSettingsPersistence() {
+        if (!APP_CONFIG.settings?.persistSettings || !activeTheme) return;
+        clearTimeout(persistTextTimer);
+        pendingTextPersistence = {
+          themeId: activeTheme.id,
+          settings: {
+            ...activeSettings,
+            textOverrides: { ...(activeSettings.textOverrides || {}) },
+          },
+        };
+        persistTextTimer = setTimeout(flushScheduledThemeSettingsPersistence, 250);
+      }
+
+      function loadThemeSettings(theme) {
+        const defaults = theme.settings?.defaults || {};
+        const stored = readStoredSettings().themes[theme.id] || {};
+        const configuredTrailRevision = theme.settings?.trailDefaultRevision;
+        const shouldApplyNewTrailDefault = typeof configuredTrailRevision === 'string' &&
+          configuredTrailRevision && stored.trailDefaultRevision !== configuredTrailRevision;
+        return sanitizeThemeSettings(theme, {
+          ...defaults,
+          ...stored,
+          ...(shouldApplyNewTrailDefault ? { trailId: defaults.trailId } : {}),
+        });
+      }
+
+      function startDrawingWhenImagesReady(generation) {
+        if (generation !== imageLoadGeneration) return;
+        const currentImagesReady = top.complete && top.naturalWidth > 0 &&
+          bottom.complete && bottom.naturalWidth > 0;
+        if (!currentImagesReady) return;
+
+        imagesReady = true;
+        document.body.dataset.imageState = 'ready';
+        lastFrameTime = 0;
+        if (!isPaused) {
+          if (animFrameId) cancelAnimationFrame(animFrameId);
+          animFrameId = requestAnimationFrame(draw);
+        }
+      }
+
+      function loadThemeImages(theme) {
+        const generation = ++imageLoadGeneration;
+        imagesReady = false;
+        document.body.dataset.imageState = 'loading';
+        if (animFrameId) {
+          cancelAnimationFrame(animFrameId);
+          animFrameId = null;
+        }
+
+        const handleLoad = () => startDrawingWhenImagesReady(generation);
+        const handleError = event => {
+          if (generation !== imageLoadGeneration) return;
+          imagesReady = false;
+          document.body.dataset.imageState = 'error';
+          const failedSource = event.currentTarget?.currentSrc || event.currentTarget?.src || 'unknown image';
+          console.error(`Wallpaper artwork failed to load: ${failedSource}`);
+        };
+
+        top.onload = handleLoad;
+        bottom.onload = handleLoad;
+        top.onerror = handleError;
+        bottom.onerror = handleError;
+        top.src = theme.assets.imageAtRest;
+        bottom.src = theme.assets.imageInTrail;
+
+        // Cached local images can already be complete before a load event is observed.
+        startDrawingWhenImagesReady(generation);
+      }
+
+      function applyTheme(themeId, preferredTrailId) {
+        flushScheduledThemeSettingsPersistence();
+        const theme = getThemeById(themeId);
+        const trailOptions = getTrailOptions(theme.id);
+        activeTheme = theme;
+        activeSettings = loadThemeSettings(theme);
+        if (query.get('motion') === 'on' &&
+          theme.motion?.enabled === true &&
+          getThemeCapabilities(theme).has('artworkMotion')) {
+          activeSettings.artworkMotion = true;
+        }
+        if (trailOptions.includes(preferredTrailId)) activeSettings.trailId = preferredTrailId;
+        activeTrailId = activeSettings.trailId;
+        trailHeadScale = activeSettings.headSize / 100;
+        targetTrailHeadScale = trailHeadScale;
+        document.body.classList.toggle('ui-hidden', !activeSettings.showUi);
+        hero.dataset.theme = theme.id;
+        motionPreviewEnabled = theme.motion?.enabled === true && query.get('motion') !== 'off';
+        resetTrail();
+        resetLivingMotion();
+
+        // Render immutable defaults plus sanitized plain-text customer overrides.
+        renderThemeContent();
+
+        // Inject CSS Colors
+        const root = document.documentElement;
+        root.style.setProperty('--primary', theme.colors.primary);
+        root.style.setProperty('--secondary', theme.colors.secondary);
+        root.style.setProperty('--logo-color', theme.colors.logoColor);
+        root.style.setProperty('--logo-stroke', theme.colors.logoStroke);
+        root.style.setProperty('--title-shadow', theme.colors.titleShadow);
+        root.style.setProperty('--right-title-shadow', theme.colors.rightTitleShadow);
+
+        if (theme.fonts) {
+          let fontLink = document.getElementById('dynamic-fonts');
+          if (fontLink) fontLink.remove();
+          const families = Object.values(theme.fonts).map(f => f.replace(/ /g, '+') + ':wght@400;700').join('&family=');
+          if (families) {
+            fontLink = document.createElement('link');
+            fontLink.id = 'dynamic-fonts';
+            fontLink.rel = 'stylesheet';
+            fontLink.href = `https://fonts.googleapis.com/css2?family=${families}&display=swap`;
+            document.head.appendChild(fontLink);
+          }
+          root.style.setProperty('--font-logo', `'${theme.fonts.logo}', sans-serif`);
+          root.style.setProperty('--font-title', `'${theme.fonts.title}', sans-serif`);
+          root.style.setProperty('--font-eyebrow', `'${theme.fonts.eyebrow}', sans-serif`);
+          root.style.setProperty('--font-desc', `'${theme.fonts.desc}', sans-serif`);
+        }
+
+        // Load the current pair as one generation so theme changes cannot strand the render loop.
+        loadThemeImages(theme);
+
+        document.title = theme.themeName;
+      }
+
+      function setRuntimeSetting(settingName, value, options = {}) {
+        const previousTrailId = activeSettings.trailId;
+        const previousPerformanceMode = activeSettings.performanceMode;
+        const previousArtworkMotion = activeSettings.artworkMotion;
+        const previousShowUi = activeSettings.showUi;
+        activeSettings = sanitizeThemeSettings(activeTheme, { ...activeSettings, [settingName]: value });
+        activeTrailId = activeSettings.trailId;
+        targetTrailHeadScale = activeSettings.headSize / 100;
+        document.body.classList.toggle('ui-hidden', !activeSettings.showUi);
+
+        if (activeTrailId !== previousTrailId) resetTrail();
+        if (activeSettings.performanceMode !== previousPerformanceMode) resize();
+        if (activeSettings.artworkMotion !== previousArtworkMotion) {
+          resetLivingMotion();
+        }
+        if (previousShowUi && !activeSettings.showUi) setSettingsPanelOpen(false);
+        if (options.persist !== false) persistThemeSettings();
+        updateDevButtonLabels();
+        updateSettingsControls();
+      }
+
+      function setRuntimeTextSetting(fieldId, value, options = {}) {
+        if (!getThemeCapabilities(activeTheme).has('textCustomization')) return;
+        if (!getThemeTextFields(activeTheme).includes(fieldId)) return;
+        const definition = TEXT_FIELD_DEFINITIONS[fieldId];
+        const candidateValue = options.decodeEscapedNewlines && definition.multiline
+          ? String(value).replace(/\\n/g, '\n')
+          : value;
+        activeSettings = sanitizeThemeSettings(activeTheme, {
+          ...activeSettings,
+          textOverrides: {
+            ...activeSettings.textOverrides,
+            [fieldId]: candidateValue,
+          },
+        });
+        renderThemeContent();
+        if (options.persist !== false) {
+          if (options.debounce) scheduleThemeSettingsPersistence();
+          else persistThemeSettings();
+        }
+        updateSettingsControls();
+      }
+
+      function resetThemeText() {
+        activeSettings = sanitizeThemeSettings(activeTheme, {
+          ...activeSettings,
+          textOverrides: {},
+        });
+        renderThemeContent();
+        persistThemeSettings();
+        updateSettingsControls();
+      }
+
+      function resetThemeSettings() {
+        activeSettings = sanitizeThemeSettings(activeTheme, activeTheme.settings?.defaults || {});
+        activeTrailId = activeSettings.trailId;
+        trailHeadScale = activeSettings.headSize / 100;
+        targetTrailHeadScale = trailHeadScale;
+        document.body.classList.toggle('ui-hidden', !activeSettings.showUi);
+        renderThemeContent();
+        resetTrail();
+        resetLivingMotion();
+        resize();
+        persistThemeSettings();
+        updateDevButtonLabels();
+        updateSettingsControls();
+      }
+
+      function getTrailDurationMs() {
+        return getThemeInteraction().baseTrailDurationMs * (activeSettings.trailPersistence || 100) / 100;
+      }
+
+      function getEffectIntensity() {
+        return (activeSettings.effectIntensity || 100) / 100;
+      }
+
+      function getGlowStrength() {
+        return (Number.isFinite(activeSettings.glowStrength) ? activeSettings.glowStrength : 100) / 100;
+      }
+
+      function getDimmingAlpha() {
+        return Math.min(0.9, Math.max(0, (activeSettings.backgroundDimming || 42) / 100));
+      }
+
+      function getRenderPixelBudget() {
+        const mode = activeSettings.performanceMode || 'balanced';
+        if (mode === 'low-power') return Math.min(MAX_RENDER_PIXELS, 1920 * 1080);
+        if (mode === 'quality') return MAX_RENDER_PIXELS;
+        return Math.min(MAX_RENDER_PIXELS, 2560 * 1440);
+      }
+
+      // --- Temporary Theme & UI Switcher ---
+      const buildMode = APP_CONFIG.build?.mode || 'development';
+      const buildPlatform = APP_CONFIG.build?.platform || 'browser';
+      const isDevelopmentBuild = buildMode === 'development' && buildPlatform === 'browser';
+      const isCustomerBrowserBuild = buildMode === 'customer' && buildPlatform === 'browser';
+      const usesNativeHostSettings = buildMode === 'customer' &&
+        (buildPlatform === 'lively' || buildPlatform === 'wallpaper-engine');
+      const query = new URLSearchParams(window.location.search);
+      const requestedThemeId = isDevelopmentBuild
+        ? (query.get('theme') || APP_CONFIG.settings?.defaultThemeId)
+        : APP_CONFIG.settings?.defaultThemeId;
+      let currentThemeIdx = Math.max(0, runtimeThemes.findIndex(theme => theme.id === requestedThemeId));
+      applyTheme(runtimeThemes[currentThemeIdx].id, isDevelopmentBuild ? query.get('trail') : undefined);
+
+      if (!usesNativeHostSettings && !document.getElementById('settings-font')) {
+        const settingsFontLink = document.createElement('link');
+        settingsFontLink.id = 'settings-font';
+        settingsFontLink.rel = 'stylesheet';
+        settingsFontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+        document.head.appendChild(settingsFontLink);
+      }
+
+      const devUiContainer = document.createElement('div');
+      devUiContainer.style.cssText = 'position: absolute; top: 20px; right: 20px; z-index: 100; display: flex; flex-wrap: wrap; justify-content: flex-end; max-width: min(720px, calc(100vw - 40px)); gap: 10px; pointer-events: auto; transition: opacity 0.4s;';
+
+      const themeBtn = document.createElement('button');
+      themeBtn.textContent = 'SWITCH THEME';
+      themeBtn.style.cssText = 'padding: 10px 14px; background: rgba(8,10,15,0.72); color: #f7f8fa; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-family: Inter, "Segoe UI", sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: 0.055em; backdrop-filter: blur(10px); transition: background 0.25s, color 0.25s, border-color 0.25s;';
+      themeBtn.onmouseover = () => { themeBtn.style.background = 'rgba(255,255,255,0.9)'; themeBtn.style.color = '#000'; };
+      themeBtn.onmouseout = () => { themeBtn.style.background = 'rgba(0,0,0,0.65)'; themeBtn.style.color = '#fff'; };
+      themeBtn.addEventListener('click', () => {
+        currentThemeIdx = (currentThemeIdx + 1) % runtimeThemes.length;
+        applyTheme(runtimeThemes[currentThemeIdx].id);
+        resize();
+        updateDevButtonLabels();
+        updateSettingsControls();
+      });
+
+      const trailBtn = document.createElement('button');
+      trailBtn.style.cssText = themeBtn.style.cssText;
+      trailBtn.onmouseover = () => { trailBtn.style.background = 'rgba(255,255,255,0.9)'; trailBtn.style.color = '#000'; };
+      trailBtn.onmouseout = () => { trailBtn.style.background = 'rgba(0,0,0,0.65)'; trailBtn.style.color = '#fff'; };
+      trailBtn.addEventListener('click', () => {
+        const themeId = runtimeThemes[currentThemeIdx].id;
+        const trailOptions = getTrailOptions(themeId);
+        const currentTrailIdx = Math.max(0, trailOptions.indexOf(activeTrailId));
+        setRuntimeSetting('trailId', trailOptions[(currentTrailIdx + 1) % trailOptions.length]);
+      });
+
+      const motionBtn = document.createElement('button');
+      motionBtn.style.cssText = themeBtn.style.cssText;
+      motionBtn.onmouseover = () => { motionBtn.style.background = 'rgba(255,255,255,0.9)'; motionBtn.style.color = '#000'; };
+      motionBtn.onmouseout = () => { motionBtn.style.background = 'rgba(0,0,0,0.65)'; motionBtn.style.color = '#fff'; };
+      motionBtn.addEventListener('click', () => {
+        if (activeTheme.motion?.enabled !== true || !getThemeCapabilities(activeTheme).has('artworkMotion')) return;
+        motionPreviewEnabled = true;
+        setRuntimeSetting('artworkMotion', activeSettings.artworkMotion === false);
+      });
+
+      function updateDevButtonLabels() {
+        const theme = runtimeThemes[currentThemeIdx];
+        const trailDefinition = getTrailDefinition(theme, activeTrailId);
+        themeBtn.textContent = `THEME: ${theme.themeName}`;
+        trailBtn.textContent = `TRAIL: ${trailDefinition?.name || activeTrailId}`;
+        motionBtn.textContent = `ARTWORK: ${getLivingMotionConfig() ? 'LIVING' : 'STATIC'}`;
+      }
+      updateDevButtonLabels();
+
+      const headSizeControl = document.createElement('label');
+      headSizeControl.style.cssText = 'display: grid; grid-template-columns: 1fr; gap: 8px; padding: 10px 0; min-width: 0; color: #e9edf3; border-bottom: 1px solid rgba(255,255,255,0.09); font-family: Inter, "Segoe UI", sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.01em;';
+      const headSizeLabel = document.createElement('span');
+      headSizeLabel.textContent = 'Head size \u00b7 100%';
+      headSizeLabel.style.cssText = 'white-space: nowrap;';
+      const headSizeInput = document.createElement('input');
+      headSizeInput.type = 'range';
+      headSizeInput.min = String(APP_CONFIG.controls?.headSize?.min ?? 55);
+      headSizeInput.max = String(APP_CONFIG.controls?.headSize?.max ?? 160);
+      headSizeInput.step = String(APP_CONFIG.controls?.headSize?.step ?? 5);
+      headSizeInput.value = '100';
+      headSizeInput.setAttribute('aria-label', 'Trail head size');
+      headSizeInput.style.cssText = 'width: 100%; cursor: pointer; accent-color: var(--primary);';
+      headSizeInput.addEventListener('input', () => {
+        setRuntimeSetting('headSize', Number(headSizeInput.value));
+      });
+      headSizeControl.appendChild(headSizeLabel);
+      headSizeControl.appendChild(headSizeInput);
+
+      function createRangeControl(settingName, labelText) {
+        const definition = APP_CONFIG.controls?.[settingName];
+        const row = document.createElement('label');
+        row.style.cssText = headSizeControl.style.cssText;
+        const label = document.createElement('span');
+        label.style.cssText = 'white-space: nowrap;';
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.min = String(definition.min);
+        input.max = String(definition.max);
+        input.step = String(definition.step);
+        input.setAttribute('aria-label', labelText);
+        input.style.cssText = headSizeInput.style.cssText;
+        input.addEventListener('input', () => setRuntimeSetting(settingName, Number(input.value)));
+        row.appendChild(label);
+        row.appendChild(input);
+        return { row, label, input, labelText, settingName };
+      }
+
+      const persistenceControl = createRangeControl('trailPersistence', 'Trail persistence');
+      const intensityControl = createRangeControl('effectIntensity', 'Effect intensity');
+      const glowControl = createRangeControl('glowStrength', 'Glow strength');
+      const dimmingControl = createRangeControl('backgroundDimming', 'Background dimming');
+
+      const performanceControl = document.createElement('label');
+      performanceControl.style.cssText = headSizeControl.style.cssText;
+      const performanceLabel = document.createElement('span');
+      performanceLabel.textContent = 'Performance';
+      performanceLabel.style.cssText = 'white-space: nowrap;';
+      const performanceSelect = document.createElement('select');
+      performanceSelect.setAttribute('aria-label', 'Performance mode');
+      performanceSelect.style.cssText = 'width: 100%; padding: 8px 10px; color: #f4f6f8; background: rgba(18,21,29,0.96); border: 1px solid rgba(255,255,255,0.14); border-radius: 7px; font: inherit; letter-spacing: 0.01em;';
+      for (const optionName of APP_CONFIG.controls?.performanceMode?.options || ['balanced']) {
+        const option = document.createElement('option');
+        option.value = optionName;
+        option.textContent = optionName.replace('-', ' ').toUpperCase();
+        performanceSelect.appendChild(option);
+      }
+      performanceSelect.addEventListener('change', () => setRuntimeSetting('performanceMode', performanceSelect.value));
+      performanceControl.appendChild(performanceLabel);
+      performanceControl.appendChild(performanceSelect);
+
+      const settingsPanel = document.createElement('div');
+      settingsPanel.style.cssText = 'position: absolute; top: 72px; right: 20px; z-index: 99; display: none; flex-direction: column; width: min(340px, calc(100vw - 32px)); max-height:calc(100vh - 110px); overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; scrollbar-gutter:stable; gap:2px; padding:18px; background:linear-gradient(160deg, rgba(12,15,22,0.94), rgba(5,7,11,0.90)); color:#f5f7fa; border:1px solid rgba(255,255,255,0.13); border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.42); backdrop-filter:blur(18px); pointer-events:auto; font-family:Inter,"Segoe UI",sans-serif; transition:opacity 0.25s, transform 0.25s;';
+      settingsPanel.setAttribute('role', 'dialog');
+      settingsPanel.setAttribute('aria-modal', 'false');
+      settingsPanel.setAttribute('aria-hidden', 'true');
+      const settingsHeading = document.createElement('div');
+      settingsHeading.id = 'wallpaper-settings-heading';
+      settingsHeading.textContent = 'Experience settings';
+      settingsHeading.style.cssText = 'font-size: 16px; font-weight: 650; letter-spacing: -0.01em;';
+      settingsPanel.setAttribute('aria-labelledby', settingsHeading.id);
+      const settingsDescription = document.createElement('div');
+      settingsDescription.textContent = 'Tune the interaction without changing the artwork.';
+      settingsDescription.style.cssText = 'margin: 3px 0 10px; color: rgba(230,235,244,0.62); font-size: 11px; line-height: 1.45;';
+      const settingsHeader = document.createElement('div');
+      settingsHeader.style.cssText = 'display:flex; align-items:flex-start; justify-content:space-between; gap:16px;';
+      settingsHeader.appendChild(settingsHeading);
+      settingsPanel.appendChild(settingsHeader);
+      settingsPanel.appendChild(settingsDescription);
+
+      const trailSelectControl = document.createElement('label');
+      trailSelectControl.style.cssText = headSizeControl.style.cssText;
+      const trailSelectLabel = document.createElement('span');
+      trailSelectLabel.textContent = 'Trail style';
+      const trailSelect = document.createElement('select');
+      trailSelect.setAttribute('aria-label', 'Trail');
+      trailSelect.style.cssText = performanceSelect.style.cssText;
+      trailSelect.addEventListener('change', () => setRuntimeSetting('trailId', trailSelect.value));
+      trailSelectControl.appendChild(trailSelectLabel);
+      trailSelectControl.appendChild(trailSelect);
+      settingsPanel.appendChild(trailSelectControl);
+
+      const artworkMotionControl = document.createElement('label');
+      artworkMotionControl.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; color:#e9edf3; border-bottom:1px solid rgba(255,255,255,0.09); font-family:Inter,"Segoe UI",sans-serif; font-size:12px; font-weight:500; cursor:pointer;';
+      const artworkMotionLabel = document.createElement('span');
+      artworkMotionLabel.textContent = 'Living artwork';
+      artworkMotionLabel.title = 'Turn off for a completely static artwork layer.';
+      const artworkMotionCheckbox = document.createElement('input');
+      artworkMotionCheckbox.type = 'checkbox';
+      artworkMotionCheckbox.setAttribute('aria-label', 'Living artwork');
+      artworkMotionCheckbox.style.cssText = 'width:16px; height:16px; accent-color:var(--primary); cursor:pointer;';
+      artworkMotionCheckbox.addEventListener('change', () => {
+        motionPreviewEnabled = true;
+        setRuntimeSetting('artworkMotion', artworkMotionCheckbox.checked);
+      });
+      artworkMotionControl.appendChild(artworkMotionLabel);
+      artworkMotionControl.appendChild(artworkMotionCheckbox);
+      settingsPanel.appendChild(artworkMotionControl);
+
+      const showUiControl = document.createElement('label');
+      showUiControl.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; color:#e9edf3; border-bottom:1px solid rgba(255,255,255,0.09); font-family:Inter,"Segoe UI",sans-serif; font-size:12px; font-weight:500; cursor:pointer;';
+      const showUiLabel = document.createElement('span');
+      showUiLabel.textContent = 'Show theme text';
+      const showUiCheckbox = document.createElement('input');
+      showUiCheckbox.type = 'checkbox';
+      showUiCheckbox.setAttribute('aria-label', 'Show theme text');
+      showUiCheckbox.style.cssText = 'width:16px; height:16px; accent-color:var(--primary); cursor:pointer;';
+      showUiCheckbox.addEventListener('change', () => setRuntimeSetting('showUi', showUiCheckbox.checked));
+      showUiControl.appendChild(showUiLabel);
+      showUiControl.appendChild(showUiCheckbox);
+      settingsPanel.appendChild(showUiControl);
+
+      const settingsButtonControl = document.createElement('label');
+      settingsButtonControl.style.cssText = showUiControl.style.cssText;
+      const settingsButtonLabel = document.createElement('span');
+      settingsButtonLabel.textContent = 'Show settings button';
+      const settingsButtonCheckbox = document.createElement('input');
+      settingsButtonCheckbox.type = 'checkbox';
+      settingsButtonCheckbox.setAttribute('aria-label', 'Show settings button');
+      settingsButtonCheckbox.style.cssText = showUiCheckbox.style.cssText;
+      settingsButtonCheckbox.addEventListener('change', () => {
+        setRuntimeSetting('showSettingsButton', settingsButtonCheckbox.checked);
+      });
+      settingsButtonControl.appendChild(settingsButtonLabel);
+      settingsButtonControl.appendChild(settingsButtonCheckbox);
+      settingsPanel.appendChild(settingsButtonControl);
+
+      const textEditorDetails = document.createElement('details');
+      textEditorDetails.style.cssText = 'padding:2px 0 8px; border-bottom:1px solid rgba(255,255,255,.09);';
+      const textEditorSummary = document.createElement('summary');
+      textEditorSummary.textContent = 'Text & labels';
+      textEditorSummary.style.cssText = 'padding:10px 0; color:rgba(237,241,247,.88); font-size:12px; font-weight:600; cursor:pointer; user-select:none;';
+      const textEditorDescription = document.createElement('p');
+      textEditorDescription.textContent = 'Personalize the visible wording for this theme.';
+      textEditorDescription.style.cssText = 'margin:0 0 10px; color:rgba(230,235,244,.58); font-size:10px; line-height:1.45;';
+      const textEditorBody = document.createElement('div');
+      textEditorBody.style.cssText = 'display:flex; flex-direction:column; gap:10px; padding:2px 0 8px;';
+      const textFieldControls = new Map();
+
+      for (const [fieldId, definition] of Object.entries(TEXT_FIELD_DEFINITIONS)) {
+        const fieldControl = document.createElement('label');
+        fieldControl.style.cssText = 'display:flex; flex-direction:column; gap:6px; min-width:0; color:#e9edf3; font-size:11px; font-weight:500;';
+        const fieldHeader = document.createElement('span');
+        fieldHeader.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:10px;';
+        const fieldLabel = document.createElement('span');
+        fieldLabel.textContent = definition.required ? `${definition.label} · required` : definition.label;
+        const fieldCounter = document.createElement('span');
+        fieldCounter.style.cssText = 'flex:0 0 auto; color:rgba(230,235,244,.42); font-size:9px; font-variant-numeric:tabular-nums;';
+        fieldHeader.appendChild(fieldLabel);
+        fieldHeader.appendChild(fieldCounter);
+
+        const fieldInput = document.createElement(definition.multiline ? 'textarea' : 'input');
+        if (!definition.multiline) fieldInput.type = 'text';
+        else fieldInput.rows = definition.maxLength > 100 ? 3 : 2;
+        fieldInput.autocomplete = 'off';
+        fieldInput.spellcheck = true;
+        fieldInput.dir = 'auto';
+        fieldInput.setAttribute('aria-label', definition.label);
+        fieldInput.style.cssText = 'width:100%; min-height:36px; resize:vertical; padding:9px 10px; color:#f4f6f8; background:rgba(18,21,29,.96); border:1px solid rgba(255,255,255,.14); border-radius:7px; outline:none; font:400 11px/1.45 Inter,"Segoe UI",sans-serif; overflow-wrap:anywhere;';
+
+        const updateCounter = () => {
+          fieldCounter.textContent = `${Array.from(fieldInput.value).length} / ${definition.maxLength}`;
+        };
+        fieldInput.addEventListener('input', () => {
+          const limitedValue = normalizeTextValue(fieldInput.value, definition);
+          if (limitedValue !== fieldInput.value) fieldInput.value = limitedValue;
+          updateCounter();
+          setRuntimeTextSetting(fieldId, fieldInput.value, { debounce: true });
+        });
+        fieldInput.addEventListener('change', () => {
+          persistThemeSettings();
+          updateSettingsControls();
+        });
+        fieldInput.addEventListener('blur', () => {
+          persistThemeSettings();
+          updateSettingsControls();
+        });
+
+        fieldControl.appendChild(fieldHeader);
+        fieldControl.appendChild(fieldInput);
+        textEditorBody.appendChild(fieldControl);
+        textFieldControls.set(fieldId, {
+          wrapper: fieldControl,
+          input: fieldInput,
+          counter: fieldCounter,
+          updateCounter,
+        });
+      }
+
+      const restoreTextBtn = document.createElement('button');
+      restoreTextBtn.type = 'button';
+      restoreTextBtn.textContent = 'Restore original text';
+      restoreTextBtn.style.cssText = 'margin-top:2px; padding:8px 10px; color:rgba(245,247,250,.82); background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:7px; cursor:pointer; font:600 10px Inter,"Segoe UI",sans-serif; letter-spacing:.02em;';
+      restoreTextBtn.addEventListener('click', resetThemeText);
+      textEditorBody.appendChild(restoreTextBtn);
+      textEditorDetails.appendChild(textEditorSummary);
+      textEditorDetails.appendChild(textEditorDescription);
+      textEditorDetails.appendChild(textEditorBody);
+      settingsPanel.appendChild(textEditorDetails);
+
+      settingsPanel.appendChild(headSizeControl);
+      settingsPanel.appendChild(persistenceControl.row);
+
+      const advancedSettings = document.createElement('details');
+      advancedSettings.style.cssText = 'padding:2px 0 8px; border-bottom:1px solid rgba(255,255,255,.09);';
+      const advancedSummary = document.createElement('summary');
+      advancedSummary.textContent = 'Advanced tuning';
+      advancedSummary.style.cssText = 'padding:10px 0; color:rgba(237,241,247,.78); font-size:12px; font-weight:600; cursor:pointer; user-select:none;';
+      const advancedSettingsBody = document.createElement('div');
+      advancedSettingsBody.style.cssText = 'display:flex; flex-direction:column; padding:0 0 2px;';
+      advancedSettingsBody.appendChild(intensityControl.row);
+      advancedSettingsBody.appendChild(glowControl.row);
+      advancedSettingsBody.appendChild(dimmingControl.row);
+      advancedSettingsBody.appendChild(performanceControl);
+      advancedSettings.appendChild(advancedSummary);
+      advancedSettings.appendChild(advancedSettingsBody);
+      settingsPanel.appendChild(advancedSettings);
+
+      const resetSettingsBtn = document.createElement('button');
+      resetSettingsBtn.textContent = 'Reset to defaults';
+      resetSettingsBtn.style.cssText = themeBtn.style.cssText;
+      resetSettingsBtn.addEventListener('click', resetThemeSettings);
+      settingsPanel.appendChild(resetSettingsBtn);
+
+      const settingsBtn = document.createElement('button');
+      settingsBtn.textContent = 'SETTINGS';
+      settingsBtn.style.cssText = themeBtn.style.cssText;
+
+      const customerSettingsBtn = document.createElement('button');
+      customerSettingsBtn.type = 'button';
+      customerSettingsBtn.textContent = '\u2699';
+      customerSettingsBtn.setAttribute('aria-label', 'Open wallpaper settings');
+      customerSettingsBtn.setAttribute('aria-keyshortcuts', 'M');
+      customerSettingsBtn.title = 'Wallpaper settings (M)';
+      customerSettingsBtn.style.cssText = 'position:absolute; right:18px; bottom:18px; z-index:100; width:42px; height:42px; display:grid; place-items:center; padding:0; color:rgba(255,255,255,0.82); background:rgba(8,10,15,0.60); border:1px solid rgba(255,255,255,0.16); border-radius:50%; box-shadow:0 8px 28px rgba(0,0,0,0.28); backdrop-filter:blur(12px); cursor:pointer; font:500 17px Inter,"Segoe UI",sans-serif; transition:background .2s, border-color .2s, transform .2s;';
+
+      const closeSettingsBtn = document.createElement('button');
+      closeSettingsBtn.type = 'button';
+      closeSettingsBtn.textContent = '\u00d7';
+      closeSettingsBtn.setAttribute('aria-label', 'Close wallpaper settings');
+      closeSettingsBtn.style.cssText = 'display:none; width:28px; height:28px; flex:0 0 28px; place-items:center; padding:0; color:rgba(255,255,255,.72); background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:7px; cursor:pointer; font:400 20px/1 Inter,"Segoe UI",sans-serif;';
+      settingsHeader.appendChild(closeSettingsBtn);
+
+      let settingsPanelReturnFocus = null;
+
+      function setSettingsPanelOpen(isOpen, trigger = null) {
+        const wasOpen = settingsPanel.style.display !== 'none';
+        if (isOpen && trigger instanceof HTMLElement) settingsPanelReturnFocus = trigger;
+        settingsPanel.style.display = isOpen ? 'flex' : 'none';
+        settingsPanel.setAttribute('aria-hidden', String(!isOpen));
+        settingsBtn.textContent = isOpen ? 'CLOSE SETTINGS' : 'SETTINGS';
+        settingsBtn.setAttribute('aria-expanded', String(isOpen));
+        customerSettingsBtn.setAttribute('aria-label', isOpen ? 'Close wallpaper settings' : 'Open wallpaper settings');
+        customerSettingsBtn.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen && isCustomerBrowserBuild) {
+          requestAnimationFrame(() => closeSettingsBtn.focus({ preventScroll: true }));
+        } else if (!isOpen && wasOpen && settingsPanelReturnFocus?.isConnected && settingsPanelReturnFocus.offsetParent !== null) {
+          settingsPanelReturnFocus.focus({ preventScroll: true });
+        }
+      }
+
+      settingsBtn.addEventListener('click', () => {
+        setSettingsPanelOpen(settingsPanel.style.display === 'none', settingsBtn);
+      });
+      customerSettingsBtn.addEventListener('click', () => {
+        setSettingsPanelOpen(settingsPanel.style.display === 'none', customerSettingsBtn);
+      });
+      closeSettingsBtn.addEventListener('click', () => setSettingsPanelOpen(false));
+
+      const toggleBtn = document.createElement('button');
+      toggleBtn.textContent = 'HIDE UI (H)';
+      toggleBtn.style.cssText = themeBtn.style.cssText;
+      toggleBtn.onmouseover = () => { toggleBtn.style.background = 'rgba(255,255,255,0.9)'; toggleBtn.style.color = '#000'; };
+      toggleBtn.onmouseout = () => { toggleBtn.style.background = 'rgba(0,0,0,0.65)'; toggleBtn.style.color = '#fff'; };
+
+      function setUiHidden(isHidden) {
+        setRuntimeSetting('showUi', !isHidden);
+      }
+
+      function toggleUi() {
+        setUiHidden(!document.body.classList.contains('ui-hidden'));
+      }
+
+      window.livelyPropertyListener = function (name, value) {
+        if (name === 'showUi') {
+          setRuntimeSetting('showUi', value === true || value === 'true', { persist: false });
+        } else if (name === 'artworkMotion') {
+          motionPreviewEnabled = true;
+          setRuntimeSetting('artworkMotion', value === true || value === 'true', { persist: false });
+        } else if (name === 'showSettingsButton') {
+          setRuntimeSetting('showSettingsButton', value === true || value === 'true', { persist: false });
+        } else if (name === 'headSize') {
+          setRuntimeSetting('headSize', Number(value), { persist: false });
+        } else if (name === 'trailPersistence') {
+          setRuntimeSetting('trailPersistence', Number(value), { persist: false });
+        } else if (name === 'effectIntensity') {
+          setRuntimeSetting('effectIntensity', Number(value), { persist: false });
+        } else if (name === 'glowStrength') {
+          setRuntimeSetting('glowStrength', Number(value), { persist: false });
+        } else if (name === 'backgroundDimming') {
+          setRuntimeSetting('backgroundDimming', Number(value), { persist: false });
+        } else if (name === 'performanceMode') {
+          const performanceOptions = APP_CONFIG.controls?.performanceMode?.options || ['balanced'];
+          const selectedMode = Number.isInteger(Number(value))
+            ? performanceOptions[Number(value)]
+            : String(value);
+          setRuntimeSetting('performanceMode', selectedMode, { persist: false });
+        } else if (name === 'trailId') {
+          const trails = getThemeTrails(activeTheme);
+          const selectedTrail = Number.isInteger(Number(value))
+            ? trails[Number(value)]?.id
+            : String(value);
+          setRuntimeSetting('trailId', selectedTrail, { persist: false });
+        } else if (Object.prototype.hasOwnProperty.call(LIVELY_TEXT_PROPERTIES, name)) {
+          setRuntimeTextSetting(LIVELY_TEXT_PROPERTIES[name], String(value ?? ''), {
+            persist: false,
+            decodeEscapedNewlines: true,
+          });
+        }
+      };
+      toggleBtn.addEventListener('mousedown', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleUi();
+      });
+
+      function isEditableTarget(target) {
+        return target instanceof Element && Boolean(
+          target.closest('input, textarea, select, [contenteditable="true"], [contenteditable=""]'),
+        );
+      }
+
+      function handleUiHotkey(event) {
+        const isEscape = event.code === 'Escape' || event.key === 'Escape';
+        if (isEscape && !usesNativeHostSettings && settingsPanel.style.display !== 'none') {
+          event.preventDefault();
+          setSettingsPanelOpen(false);
+          return;
+        }
+        if (isEditableTarget(event.target)) return;
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        const isH = event.code === 'KeyH' || String(event.key).toLowerCase() === 'h';
+        const isM = event.code === 'KeyM' || String(event.key).toLowerCase() === 'm';
+        if (event.repeat) return;
+        if (isH) {
+          event.preventDefault();
+          toggleUi();
+        } else if (isM && !usesNativeHostSettings && APP_CONFIG.settings?.showSettingsPanel) {
+          event.preventDefault();
+          setSettingsPanelOpen(settingsPanel.style.display === 'none');
+        }
+      }
+
+      document.addEventListener('keydown', handleUiHotkey, true);
+      window.addEventListener('pagehide', flushScheduledThemeSettingsPersistence);
+      document.documentElement.tabIndex = -1;
+      hero.addEventListener('mousedown', () => {
+        document.documentElement.focus({ preventScroll: true });
+      });
+
+      function updateSettingsControls() {
+        const capabilities = getThemeCapabilities(activeTheme);
+        const themeTrails = getThemeTrails(activeTheme);
+        const canSelectTrail = capabilities.has('trailSelection') && themeTrails.length > 1;
+        const supportedTextFields = new Set(getThemeTextFields(activeTheme));
+        const canCustomizeText = capabilities.has('textCustomization') && supportedTextFields.size > 0;
+        headSizeControl.style.display = capabilities.has('headSize') ? 'grid' : 'none';
+        persistenceControl.row.style.display = capabilities.has('trailPersistence') ? 'grid' : 'none';
+        intensityControl.row.style.display = capabilities.has('effectIntensity') ? 'grid' : 'none';
+        glowControl.row.style.display = capabilities.has('glowStrength') ? 'grid' : 'none';
+        dimmingControl.row.style.display = capabilities.has('backgroundDimming') ? 'grid' : 'none';
+        performanceControl.style.display = capabilities.has('performanceMode') ? 'grid' : 'none';
+        advancedSettings.style.display = [
+          'effectIntensity',
+          'glowStrength',
+          'backgroundDimming',
+          'performanceMode',
+        ].some(capability => capabilities.has(capability)) ? 'block' : 'none';
+        trailBtn.style.display = canSelectTrail ? '' : 'none';
+        motionBtn.style.display = isDevelopmentBuild &&
+          activeTheme.motion?.enabled === true &&
+          capabilities.has('artworkMotion') ? '' : 'none';
+        trailSelectControl.style.display = canSelectTrail ? 'grid' : 'none';
+        artworkMotionControl.style.display = capabilities.has('artworkMotion') ? 'flex' : 'none';
+        showUiControl.style.display = capabilities.has('uiVisibility') ? 'flex' : 'none';
+        settingsButtonControl.style.display = isCustomerBrowserBuild &&
+          capabilities.has('settingsButtonVisibility') ? 'flex' : 'none';
+        textEditorDetails.style.display = canCustomizeText ? 'block' : 'none';
+
+        const resolvedContent = resolveThemeContent();
+        for (const [fieldId, control] of textFieldControls) {
+          const isSupported = canCustomizeText && supportedTextFields.has(fieldId);
+          control.wrapper.hidden = !isSupported;
+          if (isSupported && document.activeElement !== control.input) {
+            control.input.value = resolvedContent[fieldId] || '';
+          }
+          control.updateCounter();
+        }
+        restoreTextBtn.disabled = Object.keys(activeSettings.textOverrides || {}).length === 0;
+        restoreTextBtn.style.opacity = restoreTextBtn.disabled ? '0.45' : '1';
+        restoreTextBtn.style.cursor = restoreTextBtn.disabled ? 'default' : 'pointer';
+
+        const existingTrailIds = Array.from(trailSelect.options).map(option => option.value);
+        const nextTrailIds = themeTrails.map(trail => trail.id);
+        if (existingTrailIds.join('|') !== nextTrailIds.join('|')) {
+          trailSelect.replaceChildren();
+          for (const trailDefinition of themeTrails) {
+            const option = document.createElement('option');
+            option.value = trailDefinition.id;
+            option.textContent = trailDefinition.name;
+            trailSelect.appendChild(option);
+          }
+        }
+
+        headSizeInput.value = String(activeSettings.headSize);
+        headSizeLabel.textContent = `Head size \u00b7 ${activeSettings.headSize}%`;
+        for (const control of [persistenceControl, intensityControl, glowControl, dimmingControl]) {
+          const value = activeSettings[control.settingName];
+          control.input.value = String(value);
+          control.label.textContent = `${control.labelText} \u00b7 ${value}%`;
+        }
+        performanceSelect.value = activeSettings.performanceMode;
+        trailSelect.value = activeTrailId;
+        artworkMotionCheckbox.checked = activeSettings.artworkMotion !== false;
+        showUiCheckbox.checked = activeSettings.showUi;
+        settingsButtonCheckbox.checked = activeSettings.showSettingsButton;
+        settingsHeading.textContent = isDevelopmentBuild
+          ? `${activeTheme.themeName} settings`
+          : 'Wallpaper settings';
+        settingsDescription.textContent = isDevelopmentBuild
+          ? 'Development controls for motion, text, visuals, and theme testing.'
+          : 'Personalize the interaction and text. Press M anytime to open or close this menu.';
+        const isHidden = !activeSettings.showUi;
+        toggleBtn.textContent = isHidden ? 'SHOW UI (H)' : 'HIDE UI (H)';
+        if (isDevelopmentBuild) {
+          // H is the recovery path in development too: a hidden interface must
+          // not leave the development toolbar or Settings entry point on screen.
+          devUiContainer.style.display = isHidden ? 'none' : 'flex';
+          settingsPanel.style.opacity = '1';
+        } else {
+          settingsPanel.style.opacity = '1';
+          const showCustomerSettingsButton = activeSettings.showUi &&
+            activeSettings.showSettingsButton;
+          customerSettingsBtn.style.display = showCustomerSettingsButton ? 'grid' : 'none';
+          customerSettingsBtn.style.opacity = showCustomerSettingsButton ? '1' : '0';
+        }
+      }
+
+      function isolateSettingsSurface(surface) {
+        surface.addEventListener('mouseenter', () => { pointerActive = false; });
+        surface.addEventListener('touchstart', () => { pointerActive = false; }, { passive: true });
+        surface.addEventListener('mousemove', event => event.stopPropagation());
+        surface.addEventListener('touchmove', event => event.stopPropagation(), { passive: true });
+      }
+
+      isolateSettingsSurface(devUiContainer);
+      isolateSettingsSurface(settingsPanel);
+      isolateSettingsSurface(customerSettingsBtn);
+
+      if (isDevelopmentBuild) {
+        devUiContainer.appendChild(toggleBtn);
+        if (APP_CONFIG.settings?.showThemeSwitcher) {
+          devUiContainer.appendChild(themeBtn);
+          devUiContainer.appendChild(trailBtn);
+          devUiContainer.appendChild(motionBtn);
+        }
+        if (APP_CONFIG.settings?.showSettingsPanel) {
+          devUiContainer.appendChild(settingsBtn);
+          hero.appendChild(settingsPanel);
+        }
+        hero.appendChild(devUiContainer);
+      } else if (isCustomerBrowserBuild) {
+        settingsPanel.style.top = 'auto';
+        settingsPanel.style.right = '18px';
+        settingsPanel.style.bottom = '70px';
+        closeSettingsBtn.style.display = 'grid';
+        hero.appendChild(settingsPanel);
+        hero.appendChild(customerSettingsBtn);
+      } else if (usesNativeHostSettings) {
+        // Lively and Wallpaper Engine expose settings in their own customer UI.
+        setSettingsPanelOpen(false);
+      }
+      updateSettingsControls();
+
+      // --- Rendering Logic ---
+      const off = document.createElement('canvas');
+      const offc = off.getContext('2d');
+
+      function cover(img, cw, ch) {
+        const ir = img.width / img.height, cr = cw / ch;
+        let w, h, x, y;
+        if (ir > cr) { h = ch; w = ch * ir; x = (cw - w) / 2; y = 0; }
+        else { w = cw; h = cw / ir; x = 0; y = (ch - h) / 2; }
+        return [x, y, w, h];
+      }
+
+      function getLivingMotionConfig() {
+        return motionPreviewEnabled &&
+          activeSettings.artworkMotion !== false &&
+          activeTheme.motion?.enabled === true
+          ? activeTheme.motion
+          : null;
+      }
+
+      function makeSeededRandom(seedText) {
+        let state = 2166136261;
+        for (const character of seedText) {
+          state ^= character.codePointAt(0);
+          state = Math.imul(state, 16777619);
+        }
+        return function random() {
+          state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+          return state / 4294967296;
+        };
+      }
+
+      function getPerformanceCount(counts) {
+        return counts?.[activeSettings.performanceMode] || 0;
+      }
+
+      function resetLivingMotion() {
+        livingMotionState.offsetX = 0;
+        livingMotionState.offsetY = 0;
+        livingMotionState.flowX = 0;
+        livingMotionState.flowY = 0;
+        livingMotionState.previousPointerX = 0;
+        livingMotionState.previousPointerY = 0;
+        livingMotionState.pointerReady = false;
+        livingPetalParticles = [];
+        livingMoteParticles = [];
+        livingConstellationLinks = [];
+        livingMistLayers = [];
+
+        const motion = getLivingMotionConfig();
+        if (!motion) return;
+        const atmosphere = motion.atmosphere;
+        const random = makeSeededRandom(`${activeTheme.id}:${activeSettings.performanceMode}`);
+
+        for (let index = 0; index < getPerformanceCount(atmosphere.petalCount); index++) {
+          livingPetalParticles.push({
+            x: random(),
+            y: random(),
+            speed: 0.006 + random() * 0.011,
+            drift: 0.003 + random() * 0.007,
+            sway: 0.003 + random() * 0.009,
+            phase: random() * Math.PI * 2,
+            size: 1.2 + random() * 2.5,
+            spin: 0.12 + random() * 0.30,
+            gold: random() > 0.74,
+          });
+        }
+
+        for (let index = 0; index < getPerformanceCount(atmosphere.moteCount); index++) {
+          livingMoteParticles.push({
+            x: random(),
+            y: 0.16 + random() * 0.76,
+            speed: 0.006 + random() * 0.012,
+            sway: 0.004 + random() * 0.014,
+            phase: random() * Math.PI * 2,
+            size: 0.8 + random() * 1.8,
+            gold: random() > 0.72,
+          });
+        }
+
+        for (let index = 0; index < getPerformanceCount(atmosphere.constellationLinkCount); index++) {
+          livingConstellationLinks.push({
+            x: 0.40 + random() * 0.54,
+            y: 0.12 + random() * 0.72,
+            length: 0.028 + random() * 0.055,
+            angle: -0.9 + random() * 1.8,
+            drift: 0.002 + random() * 0.004,
+            phase: random() * Math.PI * 2,
+          });
+        }
+
+        for (let index = 0; index < getPerformanceCount(atmosphere.mistCount); index++) {
+          livingMistLayers.push({
+            x: 0.12 + random() * 0.54,
+            y: 0.18 + random() * 0.52,
+            radius: 0.12 + random() * 0.10,
+            drift: 0.006 + random() * 0.008,
+            phase: random() * Math.PI * 2,
+          });
+        }
+      }
+
+      function updateLivingMotion(now, deltaSeconds, width, height) {
+        const motion = getLivingMotionConfig();
+        if (!motion) return;
+        const parallax = motion.parallax;
+        const normalizedX = pointerActive && pointerInitialized
+          ? Math.max(-1, Math.min(1, (smooth.x / Math.max(1, width) - 0.5) * 2))
+          : 0;
+        const normalizedY = pointerActive && pointerInitialized
+          ? Math.max(-1, Math.min(1, (smooth.y / Math.max(1, height) - 0.5) * 2))
+          : 0;
+        const targetX = -normalizedX * parallax.pointerStrengthX +
+          Math.sin(now * 0.000073) * parallax.ambientStrengthX;
+        const targetY = -normalizedY * parallax.pointerStrengthY +
+          Math.cos(now * 0.000061) * parallax.ambientStrengthY;
+        const follow = 1 - Math.exp(-parallax.followRate * deltaSeconds);
+        livingMotionState.offsetX += (targetX - livingMotionState.offsetX) * follow;
+        livingMotionState.offsetY += (targetY - livingMotionState.offsetY) * follow;
+
+        const deformation = motion.deformation;
+        if (!deformation.enabled || deformation.sourceType !== 'layered-cutouts') {
+          const settle = 1 - Math.exp(-deformation.pointerDecayRate * deltaSeconds);
+          livingMotionState.flowX += (0 - livingMotionState.flowX) * settle;
+          livingMotionState.flowY += (0 - livingMotionState.flowY) * settle;
+          livingMotionState.pointerReady = false;
+          return;
+        }
+        let targetFlowX = 0;
+        let targetFlowY = 0;
+        if (pointerActive && pointerInitialized) {
+          if (livingMotionState.pointerReady) {
+            const minimumDimension = Math.max(1, Math.min(width, height));
+            const safeDelta = Math.max(1 / 240, deltaSeconds);
+            const velocityX = (smooth.x - livingMotionState.previousPointerX) /
+              (minimumDimension * safeDelta);
+            const velocityY = (smooth.y - livingMotionState.previousPointerY) /
+              (minimumDimension * safeDelta);
+            targetFlowX = Math.max(-1, Math.min(1, velocityX * deformation.pointerResponse));
+            targetFlowY = Math.max(-1, Math.min(1, velocityY * deformation.pointerResponse));
+          }
+          livingMotionState.pointerReady = true;
+          livingMotionState.previousPointerX = smooth.x;
+          livingMotionState.previousPointerY = smooth.y;
+        } else {
+          livingMotionState.pointerReady = false;
+        }
+        const flowRate = pointerActive
+          ? deformation.pointerFollowRate
+          : deformation.pointerDecayRate;
+        const flowFollow = 1 - Math.exp(-flowRate * deltaSeconds);
+        livingMotionState.flowX += (targetFlowX - livingMotionState.flowX) * flowFollow;
+        livingMotionState.flowY += (targetFlowY - livingMotionState.flowY) * flowFollow;
+      }
+
+      function coverWithLivingMotion(img, width, height) {
+        const frame = cover(img, width, height);
+        const motion = getLivingMotionConfig();
+        if (!motion) return frame;
+        const scale = motion.parallax.overscanScale;
+        const scaledWidth = frame[2] * scale;
+        const scaledHeight = frame[3] * scale;
+        return [
+          frame[0] - (scaledWidth - frame[2]) * 0.5 + livingMotionState.offsetX,
+          frame[1] - (scaledHeight - frame[3]) * 0.5 + livingMotionState.offsetY,
+          scaledWidth,
+          scaledHeight,
+        ];
+      }
+
+      function wrapUnit(value) {
+        return value - Math.floor(value);
+      }
+
+      function appendLivingPolygon(targetContext, imageFrame, points, offsets = null) {
+        points.forEach((point, index) => {
+          const offset = offsets?.[index] || [0, 0];
+          const x = imageFrame[0] + imageFrame[2] * point[0] + offset[0];
+          const y = imageFrame[1] + imageFrame[3] * point[1] + offset[1];
+          if (index === 0) targetContext.moveTo(x, y);
+          else targetContext.lineTo(x, y);
+        });
+        targetContext.closePath();
+      }
+
+      function pointInsideLivingPolygon(x, y, points) {
+        let inside = false;
+        for (let current = 0, previous = points.length - 1; current < points.length; previous = current++) {
+          const currentPoint = points[current];
+          const previousPoint = points[previous];
+          const verticalDelta = previousPoint[1] - currentPoint[1];
+          const safeVerticalDelta = Math.abs(verticalDelta) < 1e-9
+            ? (verticalDelta < 0 ? -1e-9 : 1e-9)
+            : verticalDelta;
+          const crosses = ((currentPoint[1] > y) !== (previousPoint[1] > y)) &&
+            (x < (previousPoint[0] - currentPoint[0]) * (y - currentPoint[1]) /
+              safeVerticalDelta + currentPoint[0]);
+          if (crosses) inside = !inside;
+        }
+        return inside;
+      }
+
+      function getLivingRegionBounds(region) {
+        const cached = livingRegionBounds.get(region);
+        if (cached) return cached;
+        let minX = 1;
+        let maxX = 0;
+        let minY = 1;
+        let maxY = 0;
+        for (const point of region.points) {
+          minX = Math.min(minX, point[0]);
+          maxX = Math.max(maxX, point[0]);
+          minY = Math.min(minY, point[1]);
+          maxY = Math.max(maxY, point[1]);
+        }
+        const bounds = {
+          minX: Math.max(0, minX),
+          maxX: Math.min(1, maxX),
+          minY: Math.max(0, minY),
+          maxY: Math.min(1, maxY),
+        };
+        livingRegionBounds.set(region, bounds);
+        return bounds;
+      }
+
+      function getLivingMesh(region, density) {
+        let cachedByDensity = livingRegionMeshes.get(region);
+        if (!cachedByDensity) {
+          cachedByDensity = new Map();
+          livingRegionMeshes.set(region, cachedByDensity);
+        }
+        if (cachedByDensity.has(density)) return cachedByDensity.get(density);
+
+        const { minX, maxX, minY, maxY } = getLivingRegionBounds(region);
+        const spanX = maxX - minX;
+        const spanY = maxY - minY;
+        const alongSpan = region.axis === 'x' ? spanX : spanY;
+        const crossSpan = region.axis === 'x' ? spanY : spanX;
+        const alongSegments = Math.max(2, density);
+        const crossSegments = Math.max(
+          2,
+          Math.min(alongSegments, Math.round(alongSegments * crossSpan / Math.max(1e-6, alongSpan))),
+        );
+        const columns = region.axis === 'x' ? alongSegments : crossSegments;
+        const rows = region.axis === 'x' ? crossSegments : alongSegments;
+        const vertices = [];
+        for (let row = 0; row <= rows; row++) {
+          for (let column = 0; column <= columns; column++) {
+            vertices.push([
+              minX + spanX * column / columns,
+              minY + spanY * row / rows,
+            ]);
+          }
+        }
+
+        const triangles = [];
+        const vertexAt = (column, row) => row * (columns + 1) + column;
+        for (let row = 0; row < rows; row++) {
+          for (let column = 0; column < columns; column++) {
+            const topLeft = vertexAt(column, row);
+            const topRight = vertexAt(column + 1, row);
+            const bottomLeft = vertexAt(column, row + 1);
+            const bottomRight = vertexAt(column + 1, row + 1);
+            const centerX = (vertices[topLeft][0] + vertices[bottomRight][0]) * 0.5;
+            const centerY = (vertices[topLeft][1] + vertices[bottomRight][1]) * 0.5;
+            const intersectsRegion = pointInsideLivingPolygon(centerX, centerY, region.points) ||
+              [topLeft, topRight, bottomLeft, bottomRight].some(index =>
+                pointInsideLivingPolygon(vertices[index][0], vertices[index][1], region.points));
+            if (!intersectsRegion) continue;
+            triangles.push([topLeft, topRight, bottomRight], [topLeft, bottomRight, bottomLeft]);
+          }
+        }
+
+        const mesh = { vertices, triangles };
+        cachedByDensity.set(density, mesh);
+        return mesh;
+      }
+
+      function getLivingPointOffset(region, bounds, point, now, imageScale) {
+        const spanX = Math.max(1e-6, bounds.maxX - bounds.minX);
+        const spanY = Math.max(1e-6, bounds.maxY - bounds.minY);
+        const localX = Math.max(0, Math.min(1, (point[0] - bounds.minX) / spanX));
+        const localY = Math.max(0, Math.min(1, (point[1] - bounds.minY) / spanY));
+        const along = region.axis === 'x' ? localX : localY;
+        const across = region.axis === 'x' ? localY : localX;
+        const distanceFromAnchor = region.anchor === 'end' ? 1 - along : along;
+        const easedDistance = distanceFromAnchor * distanceFromAnchor * (3 - 2 * distanceFromAnchor);
+        const freedom = Math.pow(Math.max(0, easedDistance), region.falloff);
+        const elapsed = now * 0.001;
+        const phase = elapsed * region.speed * Math.PI * 2 +
+          along * region.frequency + region.phase + (across - 0.5) * 0.68;
+        const wave = Math.sin(phase) * 0.52 +
+          Math.sin(phase * 0.51 + 1.31) * 0.31 +
+          Math.sin(phase * 0.23 + 2.17) * 0.17;
+        const crossFlow = region.axis === 'x'
+          ? livingMotionState.flowY
+          : livingMotionState.flowX;
+        const alongFlow = region.axis === 'x'
+          ? livingMotionState.flowX
+          : livingMotionState.flowY;
+        const pointerInfluence = region.pointerInfluence;
+        const crossOffset = (wave + crossFlow * pointerInfluence) *
+          region.crossAmplitude * imageScale * freedom;
+        const alongOffset = (
+          Math.sin(phase * 0.63 + 0.79) * 0.62 + alongFlow * pointerInfluence * 0.38
+        ) * region.alongAmplitude * imageScale * freedom;
+        return region.axis === 'x'
+          ? [alongOffset, crossOffset]
+          : [crossOffset, alongOffset];
+      }
+
+      function expandLivingTriangle(points, padding) {
+        const centerX = (points[0][0] + points[1][0] + points[2][0]) / 3;
+        const centerY = (points[0][1] + points[1][1] + points[2][1]) / 3;
+        return points.map(point => {
+          const deltaX = point[0] - centerX;
+          const deltaY = point[1] - centerY;
+          const length = Math.hypot(deltaX, deltaY) || 1;
+          const scale = (length + padding) / length;
+          return [centerX + deltaX * scale, centerY + deltaY * scale];
+        });
+      }
+
+      function drawLivingTexturedTriangle(targetContext, image, source, destination) {
+        const sourcePixels = source.map(point => [point[0] * image.width, point[1] * image.height]);
+        const [s0, s1, s2] = sourcePixels;
+        const denominator = s0[0] * (s1[1] - s2[1]) +
+          s1[0] * (s2[1] - s0[1]) + s2[0] * (s0[1] - s1[1]);
+        if (Math.abs(denominator) < 1e-6) return;
+
+        const solve = values => [
+          (values[0] * (s1[1] - s2[1]) + values[1] * (s2[1] - s0[1]) +
+            values[2] * (s0[1] - s1[1])) / denominator,
+          (values[0] * (s2[0] - s1[0]) + values[1] * (s0[0] - s2[0]) +
+            values[2] * (s1[0] - s0[0])) / denominator,
+          (values[0] * (s1[0] * s2[1] - s2[0] * s1[1]) +
+            values[1] * (s2[0] * s0[1] - s0[0] * s2[1]) +
+            values[2] * (s0[0] * s1[1] - s1[0] * s0[1])) / denominator,
+        ];
+        const xTransform = solve(destination.map(point => point[0]));
+        const yTransform = solve(destination.map(point => point[1]));
+        const clipPoints = expandLivingTriangle(destination, 0.65);
+
+        targetContext.save();
+        targetContext.beginPath();
+        targetContext.moveTo(clipPoints[0][0], clipPoints[0][1]);
+        targetContext.lineTo(clipPoints[1][0], clipPoints[1][1]);
+        targetContext.lineTo(clipPoints[2][0], clipPoints[2][1]);
+        targetContext.closePath();
+        targetContext.clip();
+        targetContext.transform(
+          xTransform[0],
+          yTransform[0],
+          xTransform[1],
+          yTransform[1],
+          xTransform[2],
+          yTransform[2],
+        );
+        targetContext.drawImage(image, 0, 0);
+        targetContext.restore();
+      }
+
+      function drawLivingPuppetRegion(
+        targetContext,
+        image,
+        imageFrame,
+        region,
+        protectedAreas,
+        now,
+        deformation,
+      ) {
+        const meshDensity = getPerformanceCount(deformation.meshDensity);
+        if (!meshDensity || !region.points?.length) return;
+
+        const bounds = getLivingRegionBounds(region);
+        if (bounds.maxX - bounds.minX <= 0 || bounds.maxY - bounds.minY <= 0) return;
+        const imageScale = Math.min(Math.abs(imageFrame[2]), Math.abs(imageFrame[3]));
+        const mesh = getLivingMesh(region, meshDensity);
+        const offsets = mesh.vertices.map(point =>
+          getLivingPointOffset(region, bounds, point, now, imageScale));
+        const destination = mesh.vertices.map((point, index) => [
+          imageFrame[0] + point[0] * imageFrame[2] + offsets[index][0],
+          imageFrame[1] + point[1] * imageFrame[3] + offsets[index][1],
+        ]);
+        const outlineOffsets = region.points.map(point =>
+          getLivingPointOffset(region, bounds, point, now, imageScale));
+
+        targetContext.save();
+        targetContext.beginPath();
+        appendLivingPolygon(targetContext, imageFrame, region.points, outlineOffsets);
+        for (const protectedArea of protectedAreas || []) {
+          appendLivingPolygon(targetContext, imageFrame, protectedArea);
+        }
+        targetContext.clip('evenodd');
+        targetContext.globalAlpha = region.opacity;
+        targetContext.imageSmoothingEnabled = true;
+        targetContext.imageSmoothingQuality = activeSettings.performanceMode === 'quality'
+          ? 'high'
+          : 'medium';
+        for (const triangle of mesh.triangles) {
+          drawLivingTexturedTriangle(
+            targetContext,
+            image,
+            triangle.map(index => mesh.vertices[index]),
+            triangle.map(index => destination[index]),
+          );
+        }
+        targetContext.restore();
+      }
+
+      function drawLivingPuppetRegions(
+        targetContext,
+        image,
+        imageFrame,
+        regions,
+        protectedAreas,
+        now,
+      ) {
+        const motion = getLivingMotionConfig();
+        if (!motion || !regions?.length) return;
+        for (const region of regions) {
+          drawLivingPuppetRegion(
+            targetContext,
+            image,
+            imageFrame,
+            region,
+            protectedAreas,
+            now,
+            motion.deformation,
+          );
+        }
+      }
+
+      function drawLivingRestingAtmosphere(targetContext, now, width, height) {
+        const motion = getLivingMotionConfig();
+        if (!motion) return;
+        const atmosphere = motion.atmosphere;
+        const elapsed = now * 0.001 * atmosphere.speedScale;
+
+        targetContext.save();
+        targetContext.globalCompositeOperation = 'screen';
+        for (const mist of livingMistLayers) {
+          const x = wrapUnit(mist.x + elapsed * mist.drift) * width;
+          const y = (mist.y + Math.sin(elapsed * 0.11 + mist.phase) * 0.025) * height;
+          const radius = Math.max(width, height) * mist.radius;
+          const gradient = targetContext.createRadialGradient(x, y, 0, x, y, radius);
+          gradient.addColorStop(0, 'rgba(115,170,180,0.045)');
+          gradient.addColorStop(0.58, 'rgba(82,116,130,0.022)');
+          gradient.addColorStop(1, 'rgba(0,0,0,0)');
+          targetContext.fillStyle = gradient;
+          targetContext.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+        }
+        targetContext.restore();
+
+        if (!livingPetalParticles.length) return;
+        targetContext.save();
+        targetContext.globalCompositeOperation = 'screen';
+        targetContext.globalAlpha = atmosphere.restingOpacity;
+        for (const particle of livingPetalParticles) {
+          const x = wrapUnit(
+            particle.x + elapsed * particle.drift +
+            Math.sin(elapsed * 0.32 + particle.phase) * particle.sway,
+          ) * width;
+          const y = wrapUnit(particle.y - elapsed * particle.speed) * height;
+          const angle = particle.phase + elapsed * particle.spin;
+          targetContext.save();
+          targetContext.translate(x, y);
+          targetContext.rotate(angle);
+          targetContext.beginPath();
+          targetContext.ellipse(0, 0, particle.size * 1.7, particle.size * 0.58, 0, 0, Math.PI * 2);
+          targetContext.fillStyle = particle.gold
+            ? 'rgba(246,210,133,0.48)'
+            : 'rgba(154,245,237,0.46)';
+          targetContext.fill();
+          targetContext.restore();
+        }
+        targetContext.restore();
+      }
+
+      function drawLivingRevealedAtmosphere(targetContext, now, width, height, imageFrame) {
+        const motion = getLivingMotionConfig();
+        if (!motion) return;
+        const atmosphere = motion.atmosphere;
+        const elapsed = now * 0.001 * atmosphere.speedScale;
+
+        targetContext.save();
+        targetContext.globalCompositeOperation = 'source-atop';
+        targetContext.globalAlpha = atmosphere.revealedOpacity;
+
+        if (livingConstellationLinks.length) {
+          targetContext.beginPath();
+          for (const link of livingConstellationLinks) {
+            const sway = Math.sin(elapsed * 0.16 + link.phase) * 0.008;
+            const x = wrapUnit(link.x + elapsed * link.drift) * width;
+            const y = (link.y + sway) * height;
+            const length = link.length * Math.min(width, height);
+            targetContext.moveTo(x, y);
+            targetContext.lineTo(
+              x + Math.cos(link.angle) * length,
+              y + Math.sin(link.angle) * length,
+            );
+          }
+          targetContext.strokeStyle = 'rgba(143,231,246,0.24)';
+          targetContext.lineWidth = 0.75;
+          targetContext.stroke();
+        }
+
+        for (const particle of livingMoteParticles) {
+          const x = wrapUnit(
+            particle.x + Math.sin(elapsed * 0.24 + particle.phase) * particle.sway,
+          ) * width;
+          const y = wrapUnit(particle.y - elapsed * particle.speed) * height;
+          targetContext.beginPath();
+          targetContext.arc(x, y, particle.size, 0, Math.PI * 2);
+          targetContext.fillStyle = particle.gold
+            ? 'rgba(244,207,126,0.74)'
+            : 'rgba(134,248,238,0.72)';
+          targetContext.fill();
+        }
+
+        const starseedX = imageFrame[0] + imageFrame[2] * atmosphere.starseed.x;
+        const starseedY = imageFrame[1] + imageFrame[3] * atmosphere.starseed.y;
+        const starseedRadius = Math.min(imageFrame[2], imageFrame[3]) * atmosphere.starseed.radiusScale;
+        const glow = targetContext.createRadialGradient(
+          starseedX, starseedY, 0,
+          starseedX, starseedY, starseedRadius,
+        );
+        glow.addColorStop(0, 'rgba(238,255,250,0.22)');
+        glow.addColorStop(0.34, 'rgba(91,231,226,0.10)');
+        glow.addColorStop(0.72, 'rgba(228,190,114,0.045)');
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        targetContext.globalAlpha = 1;
+        targetContext.fillStyle = glow;
+        targetContext.fillRect(
+          starseedX - starseedRadius,
+          starseedY - starseedRadius,
+          starseedRadius * 2,
+          starseedRadius * 2,
+        );
+        targetContext.restore();
+      }
+
+      function resize() {
+        const w = hero.offsetWidth, h = hero.offsetHeight;
+        const interaction = getThemeInteraction();
+        const deviceScale = window.devicePixelRatio || 1;
+        const memorySafeScale = Math.sqrt(getRenderPixelBudget() / Math.max(1, w * h));
+        renderScale = Math.min(deviceScale, memorySafeScale);
+        canvas.width = Math.max(1, Math.round(w * renderScale));
+        canvas.height = Math.max(1, Math.round(h * renderScale));
+        off.width = canvas.width;
+        off.height = canvas.height;
+        ctx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
+        offc.setTransform(renderScale, 0, 0, renderScale, 0, 0);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        offc.imageSmoothingEnabled = true;
+        offc.imageSmoothingQuality = 'high';
+        // The original Minimal Reveal is the sizing authority for every trail.
+        HEAD_RADIUS = Math.max(
+          interaction.headRadius.minimum,
+          Math.min(w, h) * interaction.headRadius.viewportScale,
+        );
+        resetLivingMotion();
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function updatePointer(x, y) {
+        const interaction = getThemeInteraction();
+        const isDistantReentry = pointerInitialized && !pointerActive &&
+          Math.hypot(x - smooth.x, y - smooth.y) >
+            getTrailHeadRadius() * interaction.reentryDistanceScale;
+        mouse.x = x;
+        mouse.y = y;
+        if (!pointerInitialized || isDistantReentry) {
+          smooth.x = x;
+          smooth.y = y;
+          pointerInitialized = true;
+          trail.length = 0;
+          headLastActive = 0;
+          nextTrailPointId = 0;
+        }
+        pointerActive = true;
+        hint.style.opacity = 0;
+      }
+
+      function resetTrail() {
+        trail.length = 0;
+        lastFrameTime = 0;
+        pointerInitialized = false;
+        pointerActive = false;
+        headLastActive = 0;
+        nextTrailPointId = 0;
+      }
+
+      hero.addEventListener('mousemove', function (e) {
+        const r = hero.getBoundingClientRect();
+        updatePointer(e.clientX - r.left, e.clientY - r.top);
+      });
+      hero.addEventListener('touchmove', function (e) {
+        const r = hero.getBoundingClientRect(); const t = e.touches[0];
+        updatePointer(t.clientX - r.left, t.clientY - r.top);
+      }, { passive: true });
+      hero.addEventListener('mouseleave', () => { pointerActive = false; });
+      hero.addEventListener('touchend', () => { pointerActive = false; }, { passive: true });
+      hero.addEventListener('touchcancel', () => { pointerActive = false; }, { passive: true });
+
+      window.livelyWallpaperPlaybackChanged = function (paused) {
+        isPaused = paused;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        if (!isPaused && imagesReady) {
+          lastFrameTime = 0;
+          animFrameId = requestAnimationFrame(draw);
+        }
+      };
+
+      function updateTrail(now, deltaSeconds) {
+        if (!pointerInitialized) return;
+        const interaction = getThemeInteraction();
+        const sampling = interaction.sampling;
+
+        const sizeFollow = 1 - Math.exp(-interaction.headSizeFollowRate * deltaSeconds);
+        trailHeadScale += (targetTrailHeadScale - trailHeadScale) * sizeFollow;
+        if (Math.abs(targetTrailHeadScale - trailHeadScale) < 0.0005) {
+          trailHeadScale = targetTrailHeadScale;
+        }
+        const follow = 1 - Math.exp(-interaction.followRate * deltaSeconds);
+        smooth.x += (mouse.x - smooth.x) * follow;
+        smooth.y += (mouse.y - smooth.y) * follow;
+
+        if (pointerActive) {
+          headLastActive = now;
+          const lastPoint = trail[trail.length - 1];
+          // Keep samples evenly spaced and never insert the live endpoint.
+          // The endpoint is drawn separately in buildTrailPath(), so a sample
+          // crossing cannot duplicate it or reshape the head at small sizes.
+          const spacing = Math.min(
+            sampling.maximumSpacing,
+            Math.max(sampling.minimumSpacing, getTrailHeadRadius() * sampling.headRadiusFactor),
+          );
+          const distance = lastPoint
+            ? Math.hypot(smooth.x - lastPoint.x, smooth.y - lastPoint.y)
+            : Infinity;
+
+          if (!lastPoint) {
+            trail.push(makeTrailPoint(smooth.x, smooth.y, now));
+          } else if (distance >= spacing) {
+            const sampleCount = Math.min(
+              sampling.maxSamplesPerFrame,
+              Math.floor((distance - 0.001) / spacing),
+            );
+            for (let step = 1; step <= sampleCount; step++) {
+              const progress = (spacing * step) / distance;
+              trail.push(makeTrailPoint(
+                lastPoint.x + (smooth.x - lastPoint.x) * progress,
+                lastPoint.y + (smooth.y - lastPoint.y) * progress,
+                now - Math.min(34, deltaSeconds * 1000) * (1 - progress),
+              ));
+            }
+          }
+        }
+
+        const trailDuration = getTrailDurationMs();
+        while (trail.length && now - trail[0].born > trailDuration) {
+          trail.shift();
+        }
+        if (trail.length > interaction.maxTrailPoints) {
+          trail.splice(0, trail.length - interaction.maxTrailPoints);
+        }
+      }
+
+      function makeTrailPoint(x, y, born) {
+        return { x, y, born, id: nextTrailPointId++ };
+      }
+
+      function getHeadLife(now) {
+        if (!pointerInitialized || !headLastActive) return 0;
+        return 1 - Math.min(1, Math.max(0, (now - headLastActive) / getTrailDurationMs()));
+      }
+
+      function getTrailLife(point, now) {
+        return 1 - Math.min(1, Math.max(0, (now - point.born) / getTrailDurationMs()));
+      }
+
+      function getTrailHeadRadius() {
+        return HEAD_RADIUS * trailHeadScale;
+      }
+
+      function buildTrailPath(now) {
+        const headLife = getHeadLife(now);
+        if (headLife <= 0) return null;
+
+        const points = trail.slice();
+        const lastPoint = points[points.length - 1];
+        if (!lastPoint || Math.hypot(smooth.x - lastPoint.x, smooth.y - lastPoint.y) > 0.01) {
+          points.push({ x: smooth.x, y: smooth.y, born: headLastActive });
+        }
+        const distanceFromHead = new Array(points.length).fill(0);
+        let accumulatedDistance = 0;
+        for (let i = points.length - 2; i >= 0; i--) {
+          accumulatedDistance += Math.hypot(
+            points[i + 1].x - points[i].x,
+            points[i + 1].y - points[i].y,
+          );
+          distanceFromHead[i] = accumulatedDistance;
+        }
+        return { points, headLife, distanceFromHead };
+      }
+
+      function drawFadingTrailSegments(targetContext, path, now, widthScale, color, opacityScale) {
+        const points = path.points;
+        if (points.length < 2) return;
+        const ribbon = getThemeInteraction().ribbon;
+
+        targetContext.lineCap = 'round';
+        targetContext.lineJoin = 'round';
+        targetContext.strokeStyle = color;
+
+        for (let i = 0; i < points.length; i++) {
+          const previous = points[Math.max(0, i - 1)];
+          const point = points[i];
+          const next = points[Math.min(points.length - 1, i + 1)];
+          const life = getTrailLife(point, now);
+          if (life <= 0) continue;
+
+          const easedLife = life * life * (3 - 2 * life);
+          const startX = i === 0 ? point.x : (previous.x + point.x) * 0.5;
+          const startY = i === 0 ? point.y : (previous.y + point.y) * 0.5;
+          const endX = i === points.length - 1 ? point.x : (point.x + next.x) * 0.5;
+          const endY = i === points.length - 1 ? point.y : (point.y + next.y) * 0.5;
+
+          targetContext.beginPath();
+          targetContext.moveTo(startX, startY);
+          targetContext.quadraticCurveTo(point.x, point.y, endX, endY);
+          targetContext.globalAlpha = opacityScale * Math.pow(easedLife, ribbon.alphaExponent);
+          const scaleBlend = Math.max(
+            0,
+            1 - path.distanceFromHead[i] /
+              Math.max(1, HEAD_RADIUS * getThemeInteraction().headScaleBlendRadius),
+          );
+          const smoothScaleBlend = scaleBlend * scaleBlend * (3 - 2 * scaleBlend);
+          const localHeadScale = 1 + (trailHeadScale - 1) * smoothScaleBlend;
+          targetContext.lineWidth = HEAD_RADIUS * widthScale *
+            (ribbon.tailWidthScale + easedLife * ribbon.lifeWidthScale) * localHeadScale;
+          targetContext.stroke();
+        }
+      }
+
+      function appendNormalizedPath(targetContext, x, y, radius, commands, mirrorX = false) {
+        const mapX = value => x + radius * value * (mirrorX ? -1 : 1);
+        const mapY = value => y + radius * value;
+        for (const command of commands) {
+          const [operation, ...values] = command;
+          if (operation === 'M') targetContext.moveTo(mapX(values[0]), mapY(values[1]));
+          else if (operation === 'L') targetContext.lineTo(mapX(values[0]), mapY(values[1]));
+          else if (operation === 'Q') {
+            targetContext.quadraticCurveTo(
+              mapX(values[0]), mapY(values[1]),
+              mapX(values[2]), mapY(values[3]),
+            );
+          } else if (operation === 'C') {
+            targetContext.bezierCurveTo(
+              mapX(values[0]), mapY(values[1]),
+              mapX(values[2]), mapY(values[3]),
+              mapX(values[4]), mapY(values[5]),
+            );
+          } else if (operation === 'Z') targetContext.closePath();
+        }
+      }
+
+      function traceNormalizedPath(targetContext, x, y, radius, commands) {
+        targetContext.beginPath();
+        appendNormalizedPath(targetContext, x, y, Math.max(0.1, radius), commands);
+      }
+
+      function traceMirroredPath(targetContext, x, y, radius, commands) {
+        targetContext.beginPath();
+        appendNormalizedPath(targetContext, x, y, radius, commands);
+        appendNormalizedPath(targetContext, x, y, radius, commands, true);
+      }
+
+      function drawGearPiTrailMask(now, path, style) {
+        const mask = style.mask;
+        const headEase = path.headLife * path.headLife * (3 - 2 * path.headLife);
+        offc.save();
+        offc.globalCompositeOperation = 'source-over';
+        drawFadingTrailSegments(
+          offc, path, now, mask.ribbonWidthScale, mask.ribbonColor, mask.ribbonOpacity,
+        );
+        traceNormalizedPath(
+          offc,
+          smooth.x,
+          smooth.y,
+          getTrailHeadRadius() * mask.cloudScale,
+          mask.cloudCommands,
+        );
+        offc.fillStyle = mask.cloudColor;
+        offc.globalAlpha = headEase;
+        offc.fill();
+        offc.restore();
+        return path;
+      }
+
+      function drawGearPiCloudBorder(now, path, style) {
+        if (!path) return;
+        const effectStrength = getEffectIntensity() * getGlowStrength();
+        const overlay = style.overlay;
+        ctx.save();
+        ctx.globalCompositeOperation = overlay.blendMode;
+        for (const layer of overlay.ribbonLayers) {
+          drawFadingTrailSegments(
+            ctx,
+            path,
+            now,
+            layer.widthScale,
+            layer.color,
+            layer.opacity * effectStrength,
+          );
+        }
+        for (const layer of overlay.cloudLayers) {
+          traceNormalizedPath(
+            ctx,
+            smooth.x,
+            smooth.y,
+            getTrailHeadRadius() * layer.scale,
+            style.mask.cloudCommands,
+          );
+          ctx.globalAlpha = layer.opacity * path.headLife * effectStrength;
+          ctx.fillStyle = layer.color;
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function drawMinimalRevealMask(now, path, style) {
+        const mask = style.mask;
+        offc.save();
+        offc.globalCompositeOperation = 'source-over';
+        drawFadingTrailSegments(
+          offc, path, now, mask.ribbonWidthScale, mask.ribbonColor, mask.ribbonOpacity,
+        );
+        offc.globalAlpha = path.headLife;
+        offc.beginPath();
+        offc.arc(
+          smooth.x,
+          smooth.y,
+          getTrailHeadRadius() * mask.headScale,
+          0,
+          Math.PI * 2,
+        );
+        offc.fillStyle = mask.headColor;
+        offc.fill();
+        offc.restore();
+        return path;
+      }
+
+      function drawMinimalRevealGlow(path, style) {
+        if (!path) return;
+        const radius = getTrailHeadRadius() * style.glow.radiusScale;
+        const glow = ctx.createRadialGradient(smooth.x, smooth.y, 0, smooth.x, smooth.y, radius);
+        for (const stop of style.glow.stops) glow.addColorStop(stop.offset, stop.color);
+        ctx.save();
+        ctx.globalAlpha = path.headLife * getEffectIntensity() * getGlowStrength();
+        ctx.beginPath();
+        ctx.arc(smooth.x, smooth.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawHeroLightMask(now, path, style) {
+        if (!path) return null;
+        const mask = style.mask;
+        offc.save();
+        offc.globalCompositeOperation = 'source-over';
+        drawFadingTrailSegments(
+          offc, path, now, mask.ribbonWidthScale, mask.ribbonColor, mask.ribbonOpacity,
+        );
+        const radius = getTrailHeadRadius() * mask.headScale;
+        const feather = offc.createRadialGradient(
+          smooth.x, smooth.y, radius * mask.innerRadiusScale,
+          smooth.x, smooth.y, radius,
+        );
+        for (const stop of mask.featherStops) feather.addColorStop(stop.offset, stop.color);
+        offc.globalAlpha = path.headLife;
+        offc.beginPath();
+        offc.arc(smooth.x, smooth.y, radius, 0, Math.PI * 2);
+        offc.fillStyle = feather;
+        offc.fill();
+        offc.restore();
+        return path;
+      }
+
+      function drawHeroLightOverlay(now, path, style) {
+        if (!path) return;
+        const strength = getEffectIntensity() * getGlowStrength();
+        const overlay = style.overlay;
+        ctx.save();
+        ctx.globalCompositeOperation = overlay.blendMode;
+        for (const layer of overlay.ribbonLayers) {
+          if (layer.skipInLowPower && activeSettings.performanceMode === 'low-power') continue;
+          drawFadingTrailSegments(
+            ctx,
+            path,
+            now,
+            layer.widthScale,
+            layer.color,
+            layer.opacity * strength,
+          );
+        }
+        const haloRadius = getTrailHeadRadius() * overlay.haloRadiusScale;
+        const halo = ctx.createRadialGradient(
+          smooth.x, smooth.y, 0,
+          smooth.x, smooth.y, haloRadius,
+        );
+        for (const stop of overlay.haloStops) halo.addColorStop(stop.offset, stop.color);
+        ctx.globalAlpha = path.headLife * strength;
+        ctx.beginPath();
+        ctx.arc(smooth.x, smooth.y, haloRadius, 0, Math.PI * 2);
+        ctx.fillStyle = halo;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function traceWebBoundary(targetContext, x, y, radius, spokes, rotation, sagScale) {
+        targetContext.beginPath();
+        targetContext.moveTo(
+          x + Math.cos(rotation) * radius,
+          y + Math.sin(rotation) * radius,
+        );
+        for (let segment = 1; segment <= spokes; segment++) {
+          const endAngle = rotation + (Math.PI * 2 * segment) / spokes;
+          const middleAngle = endAngle - Math.PI / spokes;
+          targetContext.quadraticCurveTo(
+            x + Math.cos(middleAngle) * radius * sagScale,
+            y + Math.sin(middleAngle) * radius * sagScale,
+            x + Math.cos(endAngle) * radius,
+            y + Math.sin(endAngle) * radius,
+          );
+        }
+        targetContext.closePath();
+      }
+
+      function drawSpiderTrailMask(now, path, style) {
+        const mask = style.mask;
+        const headEase = path.headLife * path.headLife * (3 - 2 * path.headLife);
+        const headRadius = getTrailHeadRadius();
+        offc.save();
+        offc.globalCompositeOperation = 'source-over';
+        drawFadingTrailSegments(
+          offc, path, now, mask.ribbonWidthScale, mask.ribbonColor, mask.ribbonOpacity,
+        );
+
+        // A closed-shape head owns the reveal boundary. Remove the ribbon's
+        // circular cap first so it cannot show through behind the web.
+        offc.globalCompositeOperation = 'destination-out';
+        offc.globalAlpha = 1;
+        offc.beginPath();
+        offc.arc(smooth.x, smooth.y, headRadius * mask.clearScale, 0, Math.PI * 2);
+        offc.fill();
+
+        offc.globalCompositeOperation = 'source-over';
+        offc.globalAlpha = headEase;
+        offc.fillStyle = mask.headColor;
+        traceWebBoundary(
+          offc,
+          smooth.x,
+          smooth.y,
+          headRadius * mask.headScale,
+          mask.boundarySpokes,
+          mask.boundaryRotationRadians,
+          mask.boundarySagScale,
+        );
+        offc.fill();
+        offc.restore();
+        return path;
+      }
+
+      function drawWebTrailBody(now, path, style) {
+        if (!path || path.points.length < 2) return;
+        const points = path.points;
+        const bucketCount = style.bucketCount;
+        const bodyRadius = getTrailHeadRadius();
+        ctx.save();
+        ctx.globalCompositeOperation = style.blendMode;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = style.color;
+        ctx.lineWidth = Math.max(style.lineWidthMinimum, bodyRadius * style.lineWidthScale);
+
+        for (let bucket = 0; bucket < bucketCount; bucket++) {
+          let hasGeometry = false;
+          ctx.beginPath();
+          for (let i = 0; i < points.length; i++) {
+            const previous = points[Math.max(0, i - 1)];
+            const point = points[i];
+            const next = points[Math.min(points.length - 1, i + 1)];
+            const life = getTrailLife(point, now);
+            if (life <= 0) continue;
+            const pointBucket = Math.min(bucketCount - 1, Math.floor(life * bucketCount));
+            if (pointBucket !== bucket) continue;
+
+            const tangentX = next.x - previous.x;
+            const tangentY = next.y - previous.y;
+            const tangentLength = Math.max(1, Math.hypot(tangentX, tangentY));
+            const directionX = tangentX / tangentLength;
+            const directionY = tangentY / tangentLength;
+            const normalX = -directionY;
+            const normalY = directionX;
+            const startX = i === 0 ? point.x : (previous.x + point.x) * 0.5;
+            const startY = i === 0 ? point.y : (previous.y + point.y) * 0.5;
+            const endX = i === points.length - 1 ? point.x : (point.x + next.x) * 0.5;
+            const endY = i === points.length - 1 ? point.y : (point.y + next.y) * 0.5;
+            const strandSpread = bodyRadius * style.spreadScale *
+              (style.spreadBase + life * style.spreadLifeScale);
+
+            for (const strand of style.strandOffsets) {
+              const offset = strand * strandSpread;
+              ctx.moveTo(startX + normalX * offset, startY + normalY * offset);
+              ctx.quadraticCurveTo(
+                point.x + normalX * offset,
+                point.y + normalY * offset,
+                endX + normalX * offset,
+                endY + normalY * offset,
+              );
+            }
+
+            if (Number.isInteger(point.id) && point.id % style.crossbarEvery === 0) {
+              ctx.moveTo(point.x - normalX * strandSpread, point.y - normalY * strandSpread);
+              ctx.quadraticCurveTo(
+                point.x - directionX * bodyRadius * style.crossbarBendScale,
+                point.y - directionY * bodyRadius * style.crossbarBendScale,
+                point.x + normalX * strandSpread,
+                point.y + normalY * strandSpread,
+              );
+            }
+            hasGeometry = true;
+          }
+
+          if (hasGeometry) {
+            const bucketLife = (bucket + 1) / bucketCount;
+            ctx.globalAlpha = (style.alphaBase + bucketLife * style.alphaLifeScale) *
+              style.opacity * getEffectIntensity();
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      function traceRadialWeb(targetContext, x, y, radius, style) {
+        const { spokes, rings, rotationRadians, ringSagScale } = style;
+        targetContext.beginPath();
+        for (let spoke = 0; spoke < spokes; spoke++) {
+          const angle = rotationRadians + (Math.PI * 2 * spoke) / spokes;
+          targetContext.moveTo(x, y);
+          targetContext.lineTo(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius);
+        }
+
+        for (let ring = 1; ring <= rings; ring++) {
+          const ringRadius = radius * (ring / rings);
+          targetContext.moveTo(
+            x + Math.cos(rotationRadians) * ringRadius,
+            y + Math.sin(rotationRadians) * ringRadius,
+          );
+          for (let segment = 1; segment <= spokes; segment++) {
+            const endAngle = rotationRadians + (Math.PI * 2 * segment) / spokes;
+            const middleAngle = endAngle - Math.PI / spokes;
+            targetContext.quadraticCurveTo(
+              x + Math.cos(middleAngle) * ringRadius * ringSagScale,
+              y + Math.sin(middleAngle) * ringRadius * ringSagScale,
+              x + Math.cos(endAngle) * ringRadius,
+              y + Math.sin(endAngle) * ringRadius,
+            );
+          }
+        }
+      }
+
+      function drawSpiderHead(now, path, style) {
+        if (!path) return;
+        const head = style.head;
+        const radius = getTrailHeadRadius() * head.radiusScale;
+        const intensity = getEffectIntensity();
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        traceRadialWeb(ctx, smooth.x, smooth.y, radius, head);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = head.darkLayer.opacity * path.headLife * intensity;
+        ctx.strokeStyle = head.darkLayer.color;
+        ctx.lineWidth = Math.max(
+          head.darkLayer.lineWidthMinimum,
+          radius * head.darkLayer.lineWidthScale,
+        );
+        ctx.stroke();
+
+        traceRadialWeb(ctx, smooth.x, smooth.y, radius, head);
+        ctx.globalCompositeOperation = 'screen';
+        ctx.globalAlpha = head.lightLayer.opacity * path.headLife * intensity;
+        ctx.strokeStyle = head.lightLayer.color;
+        ctx.lineWidth = Math.max(
+          head.lightLayer.lineWidthMinimum,
+          radius * head.lightLayer.lineWidthScale,
+        );
+        ctx.stroke();
+
+        if (head.eyes) {
+          const eyes = head.eyes;
+          traceMirroredPath(ctx, smooth.x, smooth.y, radius, head.eyeCommands);
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalAlpha = eyes.fill.opacity * path.headLife * intensity;
+          ctx.fillStyle = eyes.fill.color;
+          ctx.fill();
+          ctx.globalAlpha = eyes.darkStroke.opacity * path.headLife * intensity;
+          ctx.strokeStyle = eyes.darkStroke.color;
+          ctx.lineWidth = Math.max(
+            eyes.darkStroke.lineWidthMinimum,
+            radius * eyes.darkStroke.lineWidthScale,
+          );
+          ctx.stroke();
+
+          traceMirroredPath(ctx, smooth.x, smooth.y, radius, head.eyeCommands);
+          ctx.globalCompositeOperation = 'screen';
+          ctx.globalAlpha = eyes.accentStroke.opacity * path.headLife * intensity;
+          ctx.strokeStyle = eyes.accentStroke.color;
+          ctx.lineWidth = Math.max(
+            eyes.accentStroke.lineWidthMinimum,
+            radius * eyes.accentStroke.lineWidthScale,
+          );
+          ctx.shadowColor = eyes.accentStroke.shadowColor;
+          ctx.shadowBlur = radius * eyes.accentStroke.shadowBlurScale * getGlowStrength();
+          ctx.stroke();
+
+          ctx.shadowColor = 'rgba(0,0,0,0)';
+          ctx.shadowBlur = 0;
+          traceMirroredPath(
+            ctx,
+            smooth.x,
+            smooth.y,
+            radius * eyes.highlightStroke.scale,
+            head.eyeCommands,
+          );
+          ctx.globalAlpha = eyes.highlightStroke.opacity * path.headLife * intensity;
+          ctx.strokeStyle = eyes.highlightStroke.color;
+          ctx.lineWidth = Math.max(
+            eyes.highlightStroke.lineWidthMinimum,
+            radius * eyes.highlightStroke.lineWidthScale,
+          );
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawSpiderTrailOverlay(now, path, style) {
+        if (!path) return;
+        drawWebTrailBody(now, path, style.body);
+        drawSpiderHead(now, path, style);
+      }
+
+      const TRAIL_RENDERERS = {
+        minimalReveal: {
+          drawMask: drawMinimalRevealMask,
+          drawOverlay: (now, path, style) => drawMinimalRevealGlow(path, style),
+        },
+        heroLight: {
+          drawMask: drawHeroLightMask,
+          drawOverlay: drawHeroLightOverlay,
+        },
+        gearPi: {
+          drawMask: drawGearPiTrailMask,
+          drawUnderlay: drawGearPiCloudBorder,
+        },
+        maskedWeb: {
+          drawMask: drawSpiderTrailMask,
+          drawOverlay: drawSpiderTrailOverlay,
+        },
+        radialWeb: {
+          drawMask: drawSpiderTrailMask,
+          drawOverlay: drawSpiderTrailOverlay,
+        },
+      };
+
+      function getActiveTrailRenderer(trailDefinition) {
+        const renderer = TRAIL_RENDERERS[trailDefinition.renderer];
+        if (!renderer) {
+          throw new Error(`Unknown trail renderer: ${trailDefinition.renderer}`);
+        }
+        return renderer;
+      }
+
+      function drawActiveTrailMask(now, renderer, trailDefinition) {
+        const path = buildTrailPath(now);
+        if (!path) return null;
+        return renderer.drawMask(now, path, trailDefinition.style);
+      }
+
+      function draw(now) {
+        if (isPaused || !imagesReady || top.naturalWidth === 0 || bottom.naturalWidth === 0) {
+          animFrameId = null;
+          return;
+        }
+        const w = hero.offsetWidth, h = hero.offsetHeight;
+        const deltaSeconds = lastFrameTime
+          ? Math.min(0.05, Math.max(0.001, (now - lastFrameTime) / 1000))
+          : 1 / 60;
+        lastFrameTime = now;
+        updateTrail(now, deltaSeconds);
+        updateLivingMotion(now, deltaSeconds, w, h);
+
+        ctx.clearRect(0, 0, w, h);
+        const ct = coverWithLivingMotion(top, w, h);
+        ctx.drawImage(top, ct[0], ct[1], ct[2], ct[3]);
+        const livingMotion = getLivingMotionConfig();
+        if (
+          livingMotion?.deformation.enabled &&
+          livingMotion.deformation.sourceType === 'layered-cutouts'
+        ) {
+          drawLivingPuppetRegions(
+            ctx,
+            top,
+            ct,
+            livingMotion.deformation.restingRegions,
+            livingMotion.deformation.restingProtectedAreas,
+            now,
+          );
+        }
+        const dimming = getDimmingAlpha();
+        ctx.fillStyle = `rgba(0,0,0,${dimming})`;
+        ctx.fillRect(0, 0, w, h);
+        drawLivingRestingAtmosphere(ctx, now, w, h);
+
+        offc.clearRect(0, 0, w, h);
+        const trailDefinition = getActiveTrailDefinition();
+        const renderer = getActiveTrailRenderer(trailDefinition);
+        const trailPath = drawActiveTrailMask(now, renderer, trailDefinition);
+        offc.globalCompositeOperation = 'source-in';
+        const cb = getLivingMotionConfig() ? ct : cover(bottom, w, h);
+        offc.drawImage(bottom, cb[0], cb[1], cb[2], cb[3]);
+        offc.globalCompositeOperation = 'source-atop';
+        if (
+          livingMotion?.deformation.enabled &&
+          livingMotion.deformation.sourceType === 'layered-cutouts' &&
+          trailPath
+        ) {
+          drawLivingPuppetRegions(
+            offc,
+            bottom,
+            cb,
+            livingMotion.deformation.revealedRegions,
+            livingMotion.deformation.revealedProtectedAreas,
+            now,
+          );
+        }
+        offc.fillStyle = `rgba(0,0,0,${dimming})`;
+        offc.fillRect(0, 0, w, h);
+        drawLivingRevealedAtmosphere(offc, now, w, h, cb);
+
+        if (renderer.drawUnderlay) {
+          renderer.drawUnderlay(now, trailPath, trailDefinition.style);
+        }
+        ctx.drawImage(off, 0, 0, w, h);
+        if (renderer.drawOverlay) {
+          renderer.drawOverlay(now, trailPath, trailDefinition.style);
+        }
+        animFrameId = requestAnimationFrame(draw);
+      }
+
+      document.addEventListener('dblclick', () => {
+        if (buildPlatform !== 'browser') return;
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => console.log(err));
+        } else {
+          document.exitFullscreen();
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>

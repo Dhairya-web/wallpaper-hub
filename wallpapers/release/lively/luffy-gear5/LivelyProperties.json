@@ -1,0 +1,131 @@
+{
+  "showUi": {
+    "type": "checkbox",
+    "value": true,
+    "text": "Show interface",
+    "help": "Show or hide the title, descriptions, and interaction hint."
+  },
+  "trailId": {
+    "type": "dropdown",
+    "value": 1,
+    "text": "Trail",
+    "items": [
+      "MINIMAL REVEAL",
+      "GEAR PI TRAIL"
+    ]
+  },
+  "headSize": {
+    "type": "slider",
+    "value": 100,
+    "min": 55,
+    "max": 160,
+    "step": 5,
+    "text": "Trail head size"
+  },
+  "trailPersistence": {
+    "type": "slider",
+    "value": 100,
+    "min": 55,
+    "max": 150,
+    "step": 5,
+    "text": "Trail persistence"
+  },
+  "effectIntensity": {
+    "type": "slider",
+    "value": 100,
+    "min": 40,
+    "max": 140,
+    "step": 5,
+    "text": "Effect intensity"
+  },
+  "glowStrength": {
+    "type": "slider",
+    "value": 100,
+    "min": 0,
+    "max": 150,
+    "step": 5,
+    "text": "Glow strength"
+  },
+  "backgroundDimming": {
+    "type": "slider",
+    "value": 42,
+    "min": 10,
+    "max": 70,
+    "step": 2,
+    "text": "Background dimming"
+  },
+  "performanceMode": {
+    "type": "dropdown",
+    "value": 1,
+    "text": "Performance",
+    "items": [
+      "quality",
+      "balanced",
+      "low power"
+    ]
+  },
+  "customTextSection": {
+    "type": "label",
+    "value": "Custom text"
+  },
+  "logoText": {
+    "type": "textbox",
+    "value": "ONE PIECE",
+    "text": "Logo",
+    "help": "Maximum 40 characters."
+  },
+  "logoSubText": {
+    "type": "textbox",
+    "value": "GEAR  5 · AWAKENING",
+    "text": "Subtitle",
+    "help": "Maximum 80 characters."
+  },
+  "leftEyebrow": {
+    "type": "textbox",
+    "value": "STRAW HAT PIRATES",
+    "text": "Left eyebrow",
+    "help": "Maximum 50 characters."
+  },
+  "leftTitle": {
+    "type": "textbox",
+    "value": "MONKEY D.\\nLUFFY",
+    "text": "Left title",
+    "help": "Maximum 80 characters. Type \\n for a new line (up to 3 lines)."
+  },
+  "leftDesc": {
+    "type": "textbox",
+    "value": "The boy who would be King of the Pirates. Rubber fists, an iron will, and a grin that never quits — chasing the world's greatest treasure.",
+    "text": "Left description",
+    "help": "Maximum 280 characters. Type \\n for a new line (up to 5 lines)."
+  },
+  "buttonText": {
+    "type": "textbox",
+    "value": "SET SAIL",
+    "text": "Button label",
+    "help": "Maximum 24 characters."
+  },
+  "rightEyebrow": {
+    "type": "textbox",
+    "value": "JOY BOY AWAKENED",
+    "text": "Right eyebrow",
+    "help": "Maximum 50 characters."
+  },
+  "rightTitle": {
+    "type": "textbox",
+    "value": "GEAR\\nFIVE",
+    "text": "Right title",
+    "help": "Maximum 80 characters. Type \\n for a new line (up to 3 lines)."
+  },
+  "rightDesc": {
+    "type": "textbox",
+    "value": "The Warrior of Liberation. Laughter becomes power, the world bends to imagination — the truest form of the Nika Devil Fruit.",
+    "text": "Right description",
+    "help": "Maximum 280 characters. Type \\n for a new line (up to 5 lines)."
+  },
+  "hintText": {
+    "type": "textbox",
+    "value": "▸ MOVE ACROSS THE SCREEN ◂",
+    "text": "Interaction hint",
+    "help": "Maximum 80 characters."
+  }
+}

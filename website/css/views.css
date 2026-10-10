@@ -1,0 +1,568 @@
+/* ============================================================
+   VIEWS — one idea per screen, media leading, copy following.
+   ============================================================ */
+
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;
+  padding-bottom:clamp(2.5rem,7vh,5rem);overflow:hidden}
+
+/* The home hero shares its frame with the artwork, so its display type is
+   scaled to sit WITH the image rather than on top of it. The dossier keeps
+   the full --t-h1 ceiling, where type is allowed to dominate. */
+.hero h1{font-size:clamp(2.3rem,6.2vw,7rem)}
+
+/* ============================================================
+   THE RIFT
+   The hero does not fade in — it opens. Two halves of the void
+   part from a seam of starbloom light, which is the same gesture
+   the product makes when the meridian opens under your cursor.
+   ============================================================ */
+.rift{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.rift span{position:absolute;top:0;bottom:0;display:block}
+.rift-l,.rift-r{width:calc(50% + 1px);background:var(--void)}
+.rift-l{left:0;animation:rift-l 2200ms var(--e-io) 560ms both}
+.rift-r{right:0;animation:rift-r 2200ms var(--e-io) 560ms both}
+.rift-seam{left:50%;width:2px;margin-left:-1px;
+  background:linear-gradient(to bottom,transparent,var(--cyan) 18%,var(--light) 50%,var(--gold) 82%,transparent);
+  box-shadow:0 0 26px 5px rgba(91,220,222,.5),0 0 70px 14px rgba(230,188,102,.22);
+  transform-origin:center;animation:rift-seam 2900ms var(--e) both}
+
+@keyframes rift-l{
+  0%{transform:translate3d(0,0,0)}
+  100%{transform:translate3d(-101%,0,0)}
+}
+@keyframes rift-r{
+  0%{transform:translate3d(0,0,0)}
+  100%{transform:translate3d(101%,0,0)}
+}
+@keyframes rift-seam{
+  0%  {transform:scaleY(0);opacity:0}
+  14% {transform:scaleY(1);opacity:1}
+  55% {opacity:.9}
+  100%{transform:scaleY(1);opacity:0}
+}
+
+/* hero content waits for the rift to part before it arrives */
+.hero .echo .w{transition-delay:calc(2050ms + var(--i,0)*54ms)}
+.hero .echo.on .w::before{animation-delay:calc(2050ms + var(--i,0)*54ms)}
+.hero .echo.on .w::after {animation-delay:calc(2110ms + var(--i,0)*54ms)}
+.hero .marg{animation:hero-in 900ms var(--e) 1900ms both}
+.hero .up{transition-delay:2500ms}
+.hero .up[data-s="1"]{transition-delay:2620ms}
+.hero .up[data-s="2"]{transition-delay:2740ms}
+.hero-scroll{animation:hero-in 900ms var(--e) 3000ms both}
+@keyframes hero-in{from{opacity:0}to{opacity:1}}
+
+@media (prefers-reduced-motion:reduce){
+  /* the rift is already open; nothing waits */
+  .rift{display:none}
+  .hero .echo .w,.hero .up,.hero .up[data-s="1"],.hero .up[data-s="2"]{transition-delay:0s !important}
+  .hero .marg,.hero-scroll{animation:none}
+}
+.hero-art{position:absolute;inset:0;z-index:0;overflow:clip}
+.hero-art img{width:100%;height:100%;object-fit:cover;object-position:72% 40%;
+  transform:scale(1.1);will-change:transform}
+.hero-art::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,var(--void) 3%,rgba(4,7,13,.60) 42%,rgba(4,7,13,.30) 72%,rgba(4,7,13,.55)),
+             linear-gradient(to right,rgba(4,7,13,.80),transparent 58%)}
+.hero-in{position:relative;z-index:3;width:100%}
+.hero h1{margin-bottom:1.9rem;max-width:16ch}
+.hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:2.5rem;flex-wrap:wrap}
+.hero-cta{display:flex;gap:.75rem;flex-wrap:wrap}
+.hero-scroll{display:flex;align-items:center;gap:.8rem;font-family:var(--f-mono);font-size:var(--t-mono);
+  letter-spacing:.24em;text-transform:uppercase;color:var(--tx-dim)}
+.hero-scroll i{display:block;width:2.6rem;height:1px;background:var(--rule-hi);position:relative;overflow:hidden}
+.hero-scroll i::after{content:"";position:absolute;inset:0;background:var(--cyan);
+  animation:sweep 2.4s var(--e-io) infinite}
+@keyframes sweep{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+
+/* ---------- STATEMENT ---------- */
+.stmt{max-width:22ch}
+.stmt-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:end}
+.stmt-side{display:grid;gap:2.5rem;padding-bottom:.5rem}
+.stmt-side>div{padding-top:1.2rem;border-top:1px solid var(--rule)}
+.stmt-side h4{margin-bottom:.5rem}
+.stmt-side p{font-size:.94rem;color:var(--tx-lo);max-width:38ch}
+
+/* ---------- SCROLLYTELLING TRANSFORM ----------
+   The section pins while the Ascendant state wipes across the
+   resting state. Same mechanic as the product, driven by scroll
+   instead of the cursor.                                       */
+.scroll-tell{position:relative;height:340svh}
+.scroll-pin{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;
+  justify-content:center;overflow:hidden}
+.scroll-stage{position:relative;width:100%;height:min(100svh,56.25vw);margin-inline:auto}
+.scroll-cap{position:absolute;left:0;right:0;bottom:0;z-index:6;pointer-events:none;
+  padding-block:clamp(3rem,10vh,7rem) clamp(1.5rem,5vh,4rem);
+  background:linear-gradient(to top,rgba(4,7,13,.92) 12%,rgba(4,7,13,.62) 52%,transparent)}
+.scroll-cap .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap}
+.scroll-step{max-width:34ch}
+.scroll-step h3{margin-bottom:.5rem}
+.scroll-step p{color:var(--tx-lo);font-size:.95rem}
+.scroll-step{opacity:0;transform:translateY(20px);
+  transition:opacity var(--d-ui) var(--e),transform var(--d-panel) var(--e)}
+.scroll-step.on{opacity:1;transform:none}
+.scroll-prog{width:min(280px,40vw);height:2px;background:var(--rule);position:relative;overflow:hidden}
+.scroll-prog i{position:absolute;inset:0;background:var(--cyan);transform-origin:left;transform:scaleX(0)}
+
+/* ---------- LIVING PANEL ---------- */
+.live-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:center}
+.live-list{display:grid;gap:0;margin-top:2rem}
+.live-list li{display:flex;justify-content:space-between;align-items:center;gap:1.5rem;
+  padding-block:1rem;border-top:1px solid var(--rule);font-size:.95rem;color:var(--tx)}
+.live-list li:last-child{border-bottom:1px solid var(--rule)}
+.live-list li span{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tx-dim)}
+.live-ctl{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;
+  padding-block:1.4rem;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:2rem}
+.sw{display:inline-flex;align-items:center;gap:.8rem}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.sw i{width:46px;height:26px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--rule-hi);position:relative;
+  transition:box-shadow var(--d-ui) var(--e),background-color var(--d-ui) var(--e)}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:var(--tx-lo);transition:transform var(--d-ui) var(--e-spring),background-color var(--d-ui) linear}
+.sw input:checked+i{background:var(--cyan-16);box-shadow:inset 0 0 0 1px var(--cyan)}
+.sw input:checked+i::after{transform:translateX(20px);background:var(--cyan)}
+.sw input:focus-visible+i{outline:2px solid var(--cyan);outline-offset:4px}
+
+/* ---------- COMMISSION ---------- */
+.comm{position:relative;overflow:hidden}
+.comm h2{max-width:11ch;margin-bottom:1.5rem}
+.price{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--f-mono);font-size:var(--t-mono);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--gold);padding-bottom:.9rem;
+  border-bottom:1px solid var(--gold-34);margin-bottom:2rem}
+.give{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(9rem,100%),1fr));gap:0;margin-top:2.5rem;
+  border-top:1px solid var(--rule)}
+.give div{padding:1.2rem 1rem 1.2rem 0;border-bottom:1px solid var(--rule)}
+.give dt{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:.4rem}
+.give dd{font-size:.9rem;color:var(--tx-lo)}
+
+/* ---------- FUNNEL ---------- */
+.steps{display:flex;gap:0;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);
+          mask-image:linear-gradient(90deg,#000 88%,transparent)}
+@media (min-width:760px){.steps{-webkit-mask-image:none;mask-image:none}}
+.steps::-webkit-scrollbar{display:none}
+.step-tab{display:flex;align-items:center;gap:.6rem;padding:1.15rem 1.5rem 1.15rem 0;flex:0 0 auto;
+  font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--tx-dim);position:relative;transition:color var(--d-ui) var(--e)}
+.step-tab[aria-current="step"]{color:var(--cyan)}
+.step-tab.done{color:var(--tx-lo)}
+.step-tab[aria-current="step"]::after{content:"";position:absolute;left:0;right:1.5rem;bottom:-1px;height:1px;
+  background:var(--cyan)}
+.pane{display:none}
+.pane.on{display:block;animation:pin var(--d-panel) var(--e) both}
+@keyframes pin{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.pane h3{margin:2.5rem 0 .6rem}
+.pane>p{color:var(--tx-lo);max-width:50ch;margin-bottom:2rem}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(13rem,100%),1fr));gap:0;
+  border-top:1px solid var(--rule)}
+.tile{text-align:left;padding:1.3rem 1.5rem 1.3rem 0;border-bottom:1px solid var(--rule);
+  color:var(--tx-lo);font-size:.88rem;position:relative;
+  transition:color var(--d-ui) var(--e),padding-left var(--d-ui) var(--e)}
+.tile b{display:block;font-size:1.05rem;font-weight:700;color:var(--tx-hi);margin-bottom:.25rem;
+  letter-spacing:-.02em}
+.tile:hover{color:var(--tx);padding-left:.7rem}
+.tile[aria-pressed="true"]{padding-left:.9rem}
+.tile[aria-pressed="true"]::before{content:"";position:absolute;left:0;top:1.3rem;bottom:1.3rem;width:2px;
+  background:var(--cyan)}
+.tile[aria-pressed="true"] b{color:var(--cyan)}
+.fld{display:block;margin-bottom:1.5rem}
+.fld span{display:block;font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--tx-dim);margin-bottom:.7rem}
+.fld input,.fld textarea{width:100%;padding:.9rem 0;border-bottom:1px solid var(--rule);color:var(--tx-hi);
+  font-size:1.05rem;transition:border-color var(--d-ui) var(--e)}
+.fld textarea{min-height:7rem;resize:vertical;line-height:1.55;font-size:1rem}
+.fld input:focus,.fld textarea:focus{outline:none;border-bottom-color:var(--cyan)}
+.fld input::placeholder,.fld textarea::placeholder{color:var(--tx-dim)}
+.step-nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2.5rem;flex-wrap:wrap}
+.sum{display:grid;gap:0;margin-bottom:2rem;border-top:1px solid var(--rule)}
+.sum div{display:flex;justify-content:space-between;gap:2rem;padding-block:.9rem;
+  border-bottom:1px solid var(--rule)}
+.sum dt{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--tx-dim)}
+.sum dd{color:var(--tx-hi);text-align:right;font-weight:500;font-size:.95rem}
+.sent{text-align:center;padding-block:clamp(3rem,9vw,6rem)}
+.sent svg{margin:0 auto 2rem;color:var(--cyan)}
+
+/* ---------- DOSSIER ---------- */
+.dh{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;
+  padding-bottom:clamp(2.5rem,8vh,6rem)}
+.dh-art{position:absolute;inset:0;overflow:clip}
+.dh-art img{width:100%;height:100%;object-fit:cover;object-position:62% 34%;transform:scale(1.12);
+  will-change:transform}
+.dh-art::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,var(--void) 2%,rgba(4,7,13,.45) 46%,rgba(4,7,13,.30))}
+.dh-in{position:relative;z-index:3;width:100%}
+.dh h1{margin-block:1.2rem .9rem}
+.dh-sub{font-size:var(--t-lg);color:var(--tx-hi);max-width:40ch;font-weight:400}
+.chap{padding-block:clamp(4rem,10vw,9rem);border-top:1px solid var(--rule)}
+.chap-no{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.26em;text-transform:uppercase;
+  color:var(--tx-dim);margin-bottom:2rem;display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:start}
+.fig{position:relative;overflow:hidden;aspect-ratio:16/9;background:#020509}
+.fig img{width:100%;height:100%;object-fit:cover}
+.dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(10rem,100%),1fr));gap:0;margin-top:2.5rem;
+  border-top:1px solid var(--rule)}
+.dl div{padding:1.1rem 1rem 1.1rem 0;border-bottom:1px solid var(--rule)}
+.dl dt{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--tx-dim);margin-bottom:.35rem}
+.dl dd{color:var(--tx-hi);font-size:.94rem;font-weight:500}
+.gates{margin-top:2rem;border-top:1px solid var(--rule)}
+.gate{display:flex;align-items:center;gap:1rem;padding-block:.95rem;border-bottom:1px solid var(--rule);
+  font-size:.94rem}
+.gate i{font-style:normal;font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.14em;
+  flex:0 0 auto;width:4.5rem}
+.gate.ok i{color:var(--cyan)}
+.gate.open i{color:var(--gold)}
+.gate b{font-weight:500;color:var(--tx-hi);flex:1}
+.note{margin-top:2rem;padding-left:1.25rem;border-left:2px solid var(--gold);color:var(--tx);font-size:.95rem;
+  max-width:56ch}
+
+/* ---------- JOURNAL ---------- */
+.post{display:grid;grid-template-columns:8rem 1fr auto;gap:clamp(1rem,4vw,3rem);align-items:baseline;
+  padding-block:clamp(1.5rem,3.5vw,2.4rem);border-top:1px solid var(--rule);position:relative;
+  transition:padding-left var(--d-panel) var(--e)}
+.post:last-of-type{border-bottom:1px solid var(--rule)}
+.post:hover{padding-left:1rem}
+.post-d{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tx-dim)}
+.post h3{margin-bottom:.4rem;transition:color var(--d-ui) var(--e)}
+.post:hover h3{color:var(--cyan)}
+.post p{color:var(--tx-lo);font-size:.94rem;max-width:56ch}
+.post-go{color:var(--tx-dim);transition:transform var(--d-ui) var(--e),color var(--d-ui) var(--e)}
+.post:hover .post-go{color:var(--cyan);transform:translateX(6px)}
+
+/* ---------- ABOUT ---------- */
+.big{font-size:clamp(1.8rem,5.2vw,4rem);font-weight:900;letter-spacing:-.045em;line-height:1.02;
+  color:var(--tx-hi);max-width:20ch}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(10rem,100%),1fr));gap:0;
+  margin-top:clamp(3rem,7vw,5rem);border-top:1px solid var(--rule)}
+.nums div{padding:1.5rem 1rem 1.5rem 0;border-bottom:1px solid var(--rule)}
+.nums b{display:block;font-size:clamp(2rem,5vw,3.4rem);font-weight:900;letter-spacing:-.05em;
+  color:var(--tx-hi);line-height:1;margin-bottom:.5rem}
+.nums span{font-size:.88rem;color:var(--tx-lo)}
+.tenets{border-top:1px solid var(--rule);margin-top:2rem}
+.tenet{display:grid;grid-template-columns:4rem 1fr;gap:clamp(1rem,4vw,3rem);padding-block:2rem;
+  border-bottom:1px solid var(--rule)}
+.tenet span{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.2em;color:var(--cyan)}
+.tenet h4{margin-bottom:.6rem}
+.tenet p{color:var(--tx-lo);font-size:.95rem;max-width:58ch}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:900px){
+  .stmt-grid,.live-grid,.two{grid-template-columns:1fr}
+  .stmt-grid{gap:3rem}
+  .post{grid-template-columns:1fr auto}
+  .post-d{grid-column:1/-1;margin-bottom:.4rem}
+  .scroll-tell{height:300svh}
+  .scroll-stage{height:auto;aspect-ratio:16/9}
+}
+@media (max-width:640px){
+  .hero{min-height:92svh}
+  .hero-cta{width:100%}
+  .hero-cta .btn{flex:1 1 auto}
+  .hero-scroll{display:none}
+  .tenet{grid-template-columns:1fr;gap:.6rem}
+  .scroll-cap .wrap{flex-direction:column;align-items:flex-start}
+}
+
+/* ============================================================
+   EDITORIAL GRID  (V4)
+   The V3 page put 19 of 25 text elements on the same left rail.
+   Nothing was ever placed — it just stacked. This is the system
+   that lets things be positioned instead: a real 12-column field,
+   plus the two moves that break a rail — hanging into the margin,
+   and overlapping the element below.
+   ============================================================ */
+.ed{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
+  column-gap:clamp(.7rem,1.5vw,1.4rem);row-gap:clamp(1rem,2.5vw,2rem);align-items:start}
+.r1{grid-row:1}
+.r2{grid-row:2}
+
+/* placement — used explicitly, never by default */
+.c1-6 {grid-column:1/7}
+.c1-8 {grid-column:1/9}
+.c1-9 {grid-column:1/10}
+.c2-8 {grid-column:2/9}
+.c3-11{grid-column:3/12}
+.c8-13{grid-column:8/13}
+.c9-13{grid-column:9/13}
+.c10-13{grid-column:10/13}
+.c1-13{grid-column:1/-1}
+
+/* a note that hangs out past the text block, in the margin */
+.marg{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.24em;
+  text-transform:uppercase;color:var(--tx-dim);align-self:start;
+  padding-top:.55em;line-height:1.7}
+.marg b{display:block;color:var(--cyan);font-weight:400}
+
+/* support copy: small, offset, and baseline-dropped so it reads as a
+   caption placed against the headline rather than a paragraph under it */
+.support{font-size:var(--t-support);line-height:1.65;color:var(--tx-lo);max-width:34ch}
+.support strong{color:var(--tx-hi);font-weight:500}
+.drop{align-self:end;padding-bottom:.5rem}
+
+/* Display type overlapping the media beneath it. This belongs on the
+   grid WRAPPER, never on a grid item — a negative margin on an item
+   drags its own siblings up into it. */
+.over-wrap{position:relative;z-index:4;margin-bottom:clamp(-3rem,-3.2vw,-1rem);pointer-events:none}
+.over-wrap a,.over-wrap button{pointer-events:auto}
+.under{position:relative;z-index:1}
+
+/* headline that deliberately runs past the container's right edge */
+.bleed-r{margin-right:calc(var(--gut)*-1)}
+
+/* tighter optical leading for very large display sizes */
+h1,.h-xl{line-height:.86;letter-spacing:-.05em}
+h2{line-height:.9;letter-spacing:-.045em}
+
+/* section rhythm: alternating compression instead of one constant pad */
+.sec-tight{padding-block:clamp(2.5rem,6vw,4.5rem)}
+.sec-open{padding-block:clamp(6rem,16vw,15rem)}
+
+@media (max-width:900px){
+  .ed{grid-template-columns:1fr;row-gap:1.5rem}
+  .c1-6,.c1-8,.c1-9,.c2-8,.c3-11,.c8-13,.c9-13,.c10-13,.c1-13{grid-column:1/-1}
+  .over-wrap{margin-bottom:0}
+  .bleed-r{margin-right:0}
+  .drop{align-self:start;padding-bottom:0}
+  .marg{padding-top:0}
+}
+
+/* Grid and flex children default to min-width:auto, which refuses to shrink
+   below their content and quietly widens the document. This is the usual
+   cause of a small unexplained horizontal overflow. */
+.two > *, .dl > *, .ed > *, .live-grid > *, .row > *, .give > * { min-width: 0 }
+.two, .dl, .ed, .live-grid, .give { min-width: 0 }
+
+
+/* At hero display sizes the standard ghost offset becomes a smear rather
+   than a colour split, so the hero uses a tighter pair. */
+.hero .echo.on .w::before{animation-name:ghostC-hero}
+.hero .echo.on .w::after {animation-name:ghostG-hero}
+@keyframes ghostC-hero{
+  0%  {opacity:0;  transform:translate3d(-.26em,.17em,0) scale(1.02)}
+  14% {opacity:.95;transform:translate3d(-.22em,.15em,0) scale(1.02)}
+  52% {opacity:.72;transform:translate3d(-.10em,.07em,0) scale(1.01)}
+  100%{opacity:0;  transform:none}
+}
+@keyframes ghostG-hero{
+  0%  {opacity:0;  transform:translate3d(.24em,-.15em,0) scale(1.02)}
+  14% {opacity:.95;transform:translate3d(.20em,-.13em,0) scale(1.02)}
+  52% {opacity:.72;transform:translate3d(.09em,-.06em,0) scale(1.01)}
+  100%{opacity:0;  transform:none}
+}
+
+
+/* The section label sits above its headline and shares its left edge, so the
+   block reads as one aligned unit against the right-hand caption — rather
+   than three items at three unrelated x positions with dead space between. */
+.ed .marg.r1{margin-bottom:.4rem}
+.ed .support.r2{align-self:start}   /* never bottom-align into the overlap zone */
+
+/* ============================================================
+   BEAT ALIGNMENT — written after measuring the rendered page,
+   not after looking at it. Two geometric defects:
+
+   1. Beat 3 drove a 110px white headline 46px down into the top
+      of a bright, busy full-bleed image, so the second line lost
+      its baseline into the artwork. The overlap was a rule applied
+      without checking contrast. The headline now clears the media
+      and its note hangs on the headline's bottom line, which moves
+      the empty space beside the LONG line instead of the short one.
+
+   2. Beat 4's two rails began together and ended 99px apart, with
+      column 4 dead and the price — the strongest number on the
+      page — set smaller than body copy. The rails now share a
+      bottom line and the figure is set as a figure.
+   ============================================================ */
+
+/* --- beat 3 --- */
+.beat-head{position:relative;z-index:4;margin-bottom:clamp(1.6rem,3.6vw,3.2rem)}
+.ed .support.r2.hang{align-self:end;justify-self:end;padding-bottom:.28em}
+
+/* --- beat 4 ---
+   Three bands, not two columns. Every item is placed on an explicit
+   row, so eyebrow/headline, price/paragraph and list/button each
+   share a top line; the button hangs to the bottom of the last row
+   so the two rails also end together. The tall gap under the eyebrow
+   is not a hole — it is the headline, which is why it reads as air
+   rather than an oversight. */
+.comm-grid{row-gap:clamp(1.9rem,4.2vw,3.4rem);align-items:start}
+.cL{grid-column:1/5}
+.cR{grid-column:6/13}
+.cr1{grid-row:1} .cr2{grid-row:2} .cr3{grid-row:3}
+.comm-grid .echo{margin-bottom:0}
+.comm-grid .price-fig{margin:0}
+.comm-grid .give{margin-top:0}
+.comm-grid .comm-cta{align-self:start}
+.price-fig{display:block;font-family:var(--f);font-size:clamp(1.9rem,1rem + 2.6vw,3.4rem);
+  font-weight:600;letter-spacing:-.025em;text-transform:none;line-height:1;
+  padding-bottom:clamp(1rem,2vw,1.5rem);margin:clamp(1.6rem,3vw,2.4rem) 0 0}
+.price-fig span{display:block;font-family:var(--f-mono);font-size:var(--t-mono);
+  letter-spacing:.24em;text-transform:uppercase;color:var(--tx-dim);margin-bottom:.7rem}
+
+@media (max-width:900px){
+  /* Placement is written inline in the views, so the single-column
+     stack cannot be restored by resetting the .cN-M helpers alone —
+     an unreset grid-column:1/9 invents implicit columns and squeezes
+     a display headline into 78px. Reset every child instead. */
+  .ed > *{grid-column:1/-1 !important;grid-row:auto !important}
+  .beat-head{margin-bottom:1.5rem}
+  .ed .support.r2.hang{align-self:start;justify-self:start;padding-bottom:0}
+  .comm-grid{row-gap:1.5rem}
+  .comm-grid .give,.comm-grid .comm-cta{margin-top:1.5rem}
+}
+
+
+/* ============================================================
+   DOSSIER + CATALOG — same treatment as the homepage: measured,
+   then corrected. Four defects on the dossier, three on the catalog.
+   ============================================================ */
+
+/* A chapter heading inside a two-column body is not the page's
+   display voice. Chapter 03 and the closing statement stay large
+   because they sit full-width above a bleed; only the ones sharing
+   a row with body copy come down. */
+.chap .two h2{font-size:var(--t-chap);letter-spacing:-.03em;line-height:.94}
+
+/* Both columns of a chapter now start on one line (.two is
+   align-items:start above). The figure was floating: centred against
+   an 843px text column it began 248px below the headline and ended
+   248px above the facts, touching nothing. */
+.chap .two > .fig{align-self:start}
+
+/* A facts strip is page furniture, not body copy. Inside a 616px
+   column it collapsed to three cramped tracks and orphaned the last
+   pair onto a second row with a stub rule. Full width, like ch. 04. */
+.chap > .dl{margin-top:clamp(2.5rem,5vw,4rem)}
+
+/* Catalog intro: the lede hung right and bottom-aligned to the
+   headline, so the empty half of the row closes and the two blocks
+   share a bottom line. Same idiom as the homepage note. */
+.lede.hang{align-self:end;justify-self:end;padding-bottom:0;max-width:38ch}
+
+/* --t-h1 is 145px at 1440, which made the catalog title larger than
+   the homepage hero — the front door out-shouted by an inside page.
+   Interior page titles match the hero's ceiling instead. */
+.page-h1{font-size:clamp(2.3rem,6.2vw,7rem)}
+
+/* Catalog entry header: status is metadata, so it belongs on the
+   eyebrow line, not floating in the space beside the title. */
+.cat-head{display:flex;align-items:baseline;justify-content:space-between;
+  gap:1.5rem;flex-wrap:wrap;border-bottom:1px solid var(--rule);
+  padding-bottom:.9rem;margin-bottom:clamp(1rem,2vw,1.6rem)}
+.cat-head .chap-no{margin-bottom:0}
+
+@media (max-width:900px){
+  .chap .two h2{font-size:var(--t-chap)}
+  .lede.hang{align-self:start;justify-self:start}
+}
+
+
+/* ============================================================
+   THE HERO IS THE DEMO
+
+   The headline says a screen is not a poster. Showing a poster
+   underneath it was the single weakest idea in the build: the
+   product was three screens down, inside a box, waiting to be
+   found. Now the first thing a pointer touches on this site is
+   the thing the site is selling.
+
+   Paint order inside .hero-art is deliberate:
+     0  the <img>       — LCP, painted on frame one, never removed
+     1  the canvas      — fades in when both states have decoded
+     2  ::after scrim   — above the canvas, so the reveal cannot
+                          brighten the ground under the headline
+     3  .hero-in        — the type, above everything
+   ============================================================ */
+.hero-art canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;
+  opacity:0;transition:opacity 1100ms var(--e)}
+.hero-art.live canvas{opacity:1}
+.hero-art::after{z-index:2}
+
+/* First instinct was to darken the left scrim, on the assumption the
+   Ascendant state is brighter. It is not — checked against the frame
+   itself, the reveal is a dusk scene with glowing filigree and reads
+   DARKER than the pale dawn of the resting state. Darkening the scrim
+   would have hidden the very thing the hero exists to show. Held at
+   the original weight, with the value floor raised only enough to
+   keep the headline off the artwork's mid-tones. */
+.hero-art::after{
+  background:linear-gradient(to top,var(--void) 3%,rgba(3,6,11,.60) 42%,rgba(3,6,11,.30) 72%,rgba(3,6,11,.55)),
+             linear-gradient(to right,rgba(3,6,11,.82),rgba(3,6,11,.34) 30%,transparent 60%)}
+
+/* A full-viewport block of type sitting on top of an interactive
+   surface will eat every pointer event that lands on it. The links
+   take theirs back. */
+.hero-in{pointer-events:none}
+.hero-in a,.hero-in button{pointer-events:auto}
+
+/* Once the surface has been touched the instruction has done its job. */
+.hero.touched .support{opacity:.55;transition:opacity 900ms var(--e)}
+
+/* A dossier title is one or two words over a full-bleed image, which
+   is the only place the display scale belongs. */
+.dh h1{font-size:var(--t-display)}
+
+
+/* ============================================================
+   A SECOND SHAPE
+
+   Every section on every page was the same object: a headline at
+   the top left, a small paragraph under or beside it, content
+   below, and the right half of the page empty. The geometry was
+   correct after the V4/V5 passes and it was still monotonous,
+   because correct and varied are different problems.
+   ============================================================ */
+
+/* A chapter-scale heading anywhere, not only inside .chap .two. */
+.h-chap{font-size:var(--t-chap);letter-spacing:-.03em;line-height:.94}
+
+/* One frame, two states, one seam. The studio page argued in prose
+   that you should draw a scene twice and composite the second under
+   the first, and showed nothing. This is that sentence as a picture:
+   the left half is the resting render, the right half is the
+   Ascendant render, same frame, same crop, split down the middle. */
+.pair{position:relative;width:100%;aspect-ratio:21/9;overflow:hidden;background:#020509;margin:0}
+.pair img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 42%}
+.pair .rv{clip-path:inset(0 0 0 50%)}
+.pair-seam{position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;
+  background:linear-gradient(to bottom,transparent,var(--cyan) 14%,var(--light) 50%,var(--gold) 86%,transparent);
+  box-shadow:0 0 22px 4px rgba(91,220,222,.34),0 0 60px 12px rgba(230,188,102,.14)}
+.pair figcaption{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;
+  padding:clamp(1.1rem,2.4vw,1.9rem) var(--gut);
+  font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.24em;text-transform:uppercase;
+  background:linear-gradient(to top,rgba(3,6,11,.94),rgba(3,6,11,.55) 55%,transparent)}
+/* The left label sits over the resting render, whose bottom-left is a
+   pale, sunlit plaza — --tx-lo vanished into it completely. Both
+   labels carry their own weight rather than relying on the scrim. */
+.pair figcaption span{text-shadow:0 1px 10px rgba(3,6,11,.9)}
+.pair figcaption span:first-child{color:var(--tx-hi)}
+.pair figcaption span:last-child{color:var(--cyan)}
+
+/* Four commitments read as four full-width text blocks stacked in the
+   left half of a 1440px page. Two columns, and the rule between them
+   does the work the empty space was failing to do. */
+@media (min-width:901px){
+  .tenets{display:grid;grid-template-columns:1fr 1fr;
+    column-gap:clamp(2rem,5vw,4.5rem);border-top:1px solid var(--rule)}
+  .tenet{padding-inline-end:0}
+  .tenet p{max-width:44ch}
+}
+
+@media (max-width:900px){
+  .pair{aspect-ratio:4/3}
+  .pair figcaption{font-size:.58rem;letter-spacing:.16em}
+}
+
+
+/* The commission price was set in 11px gold mono — the same mistake
+   the homepage made, on the page where the number matters most. It is
+   a figure, so it is set as one, with the qualifier kept small beside
+   it rather than swallowing it. */
+.price-fig em{display:block;font-style:normal;font-family:var(--f-mono);font-size:var(--t-mono);
+  letter-spacing:.2em;text-transform:uppercase;color:var(--tx-dim);margin-top:.9rem}
+.ed > .price-fig{margin-top:clamp(1.4rem,3vw,2.2rem)}

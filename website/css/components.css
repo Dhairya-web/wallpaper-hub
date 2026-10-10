@@ -1,0 +1,369 @@
+/* ============================================================
+   COMPONENTS — chrome kept deliberately thin. Wordmark, three
+   links, one pill. Rules instead of panels. Media unframed.
+   ============================================================ */
+
+/* ---------- HEADER ---------- */
+.hdr{position:fixed;inset-inline:0;top:0;height:var(--hdr);z-index:800;display:flex;align-items:center;
+  transition:transform var(--d-panel) var(--e),background-color var(--d-ui) var(--e),
+             backdrop-filter var(--d-ui) var(--e)}
+.hdr.stuck{background:rgba(4,7,13,.72);backdrop-filter:blur(18px) saturate(1.3);
+  -webkit-backdrop-filter:blur(18px) saturate(1.3)}
+.hdr.gone{transform:translateY(-104%)}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%}
+
+.mark{display:flex;align-items:center;gap:.55rem;font-weight:900;font-size:.92rem;
+  letter-spacing:.16em;color:var(--tx-hi)}
+.mark svg{width:17px;height:17px;flex:0 0 auto;transition:transform var(--d-panel) var(--e-spring)}
+.mark:hover svg{transform:rotate(180deg) scale(1.2)}
+
+.nav{display:flex;gap:2.1rem}
+.nav a{position:relative;font-size:.9rem;font-weight:500;color:var(--tx-lo);padding-block:.35rem;
+  transition:color var(--d-micro) var(--e)}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--cyan);
+  transform:scaleX(0);transform-origin:right;transition:transform var(--d-ui) var(--e)}
+.nav a:hover{color:var(--tx-hi)}
+.nav a:hover::after,.nav a[aria-current="page"]::after{transform:scaleX(1);transform-origin:left}
+.nav a[aria-current="page"]{color:var(--tx-hi)}
+
+/* With the commission pill removed the right slot holds only the burger,
+   which is hidden on desktop — leaving an empty flex child and a dead gap.
+   Drop it entirely above the breakpoint so space-between reads brand left,
+   nav hard right. */
+.hdr-r{display:none;align-items:center;gap:1.25rem}
+@media (max-width:900px){.hdr-r{display:flex}}
+
+/* burger — two rules that cross */
+/* flex, not grid: grid stretches the auto rows to fill the button,
+   which pushes the bars apart and the X never closes. */
+.burger{display:none;width:40px;height:40px;flex-direction:column;
+  align-items:center;justify-content:center;gap:5px;color:var(--tx-hi)}
+.burger span{display:block;width:19px;height:1.5px;background:currentColor;
+  transition:transform var(--d-ui) var(--e)}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(3.25px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){transform:translateY(-3.25px) rotate(-45deg)}
+
+.drawer[hidden]{display:none}
+.drawer{position:fixed;inset:0;z-index:790;background:var(--void);display:flex;flex-direction:column;
+  justify-content:center;padding:var(--hdr) var(--gut) 2rem;
+  clip-path:inset(0 0 100% 0);transition:clip-path var(--d-panel) var(--e-io)}
+.drawer.open{clip-path:inset(0 0 0 0)}
+.drawer a{font-size:clamp(1.55rem,8.4vw,3.4rem);font-weight:900;letter-spacing:-.045em;color:var(--tx-hi);
+  padding-block:.28rem;display:flex;align-items:baseline;gap:1rem;
+  opacity:0;transform:translateY(28px);transition:opacity var(--d-panel) var(--e),transform var(--d-panel) var(--e-spring)}
+.drawer.open a{opacity:1;transform:none}
+.drawer.open a:nth-child(1){transition-delay:90ms}
+.drawer.open a:nth-child(2){transition-delay:150ms}
+.drawer.open a:nth-child(3){transition-delay:210ms}
+.drawer.open a:nth-child(4){transition-delay:270ms}
+.drawer.open a:nth-child(5){transition-delay:330ms}
+.drawer a i{font-family:var(--f-mono);font-style:normal;font-size:.7rem;color:var(--cyan);letter-spacing:.2em}
+.drawer a[aria-current="page"]{color:var(--cyan)}
+
+/* ---------- BUTTONS ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  font-weight:700;font-size:.95rem;letter-spacing:-.005em;padding:.92rem 1.75rem;border-radius:999px;
+  position:relative;overflow:hidden;white-space:nowrap;
+  transition:transform var(--d-micro) var(--e),background-color var(--d-ui) var(--e),
+             color var(--d-ui) var(--e),box-shadow var(--d-ui) var(--e)}
+.btn:active{transform:scale(.97)}
+.btn svg{transition:transform var(--d-ui) var(--e)}
+.btn:hover svg{transform:translateX(4px)}
+
+.btn-fill{background:var(--light);color:var(--void)}
+.btn-fill:hover{background:var(--cyan);box-shadow:0 8px 40px var(--cyan-34)}
+.btn-cyan{background:var(--cyan);color:var(--void)}
+.btn-cyan:hover{background:var(--light);box-shadow:0 8px 40px var(--cyan-34)}
+.btn-line{color:var(--tx-hi);box-shadow:inset 0 0 0 1px var(--rule-hi)}
+.btn-line:hover{box-shadow:inset 0 0 0 1px var(--cyan);color:var(--cyan)}
+.btn-bare{color:var(--tx-lo);padding-inline:0;gap:.5rem}
+.btn-bare:hover{color:var(--cyan)}
+.btn-sm{font-size:.84rem;padding:.6rem 1.25rem}
+.btn-lg{font-size:1.02rem;padding:1.1rem 2.25rem}
+
+/* ---------- EYEBROW / META ---------- */
+.eye{display:flex;align-items:center;gap:.7rem;font-family:var(--f-mono);font-size:var(--t-mono);
+  letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);margin-bottom:1.6rem}
+.eye::before{content:"";width:1.8rem;height:1px;background:currentColor}
+.eye-gold{color:var(--gold)}
+
+.tag{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--f-mono);font-size:var(--t-mono);
+  letter-spacing:.18em;text-transform:uppercase;color:var(--tx-lo)}
+.tag::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+.tag-live{color:var(--st-live)}
+.tag-dev{color:var(--st-dev)}
+
+/* ---------- MARQUEE ---------- */
+.mq{overflow:hidden;border-block:1px solid var(--rule);padding-block:1.5rem;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mq-track{display:flex;width:max-content;animation:mq 34s linear infinite}
+.mq:hover .mq-track{animation-play-state:paused}
+.mq-item{display:flex;align-items:center;gap:2.6rem;padding-inline:1.3rem;
+  font-size:clamp(1.1rem,2.4vw,1.9rem);font-weight:700;letter-spacing:-.03em;color:var(--tx-hi);white-space:nowrap}
+.mq-item::after{content:"";width:7px;height:7px;flex:0 0 auto;
+  background:var(--cyan);clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%)}
+.mq-item:nth-child(even)::after{background:var(--gold)}
+.mq-item.ghost{color:transparent;-webkit-text-stroke:1px var(--rule-hi)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- STAGE (the reveal surface) ---------- */
+.stage{position:relative;width:100%;aspect-ratio:16/9;background:#020509;overflow:hidden;
+  touch-action:pan-y;user-select:none}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.stage-load{position:absolute;inset:0;display:grid;place-items:center;z-index:4;background:#020509;
+  transition:opacity var(--d-panel) var(--e)}
+.stage-load.gone{opacity:0;pointer-events:none}
+.stage-load i{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--cyan-16);
+  border-top-color:var(--cyan);animation:sp .85s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.stage-meta{position:absolute;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:space-between;
+  align-items:flex-end;gap:1rem;padding:clamp(.9rem,2vw,1.6rem);pointer-events:none;
+  background:linear-gradient(to top,rgba(2,5,9,.85),transparent)}
+.stage-hint{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.24em;text-transform:uppercase;
+  color:var(--tx-hi);transition:opacity var(--d-panel) var(--e)}
+.stage-hint.gone{opacity:0}
+.stage-tools{display:flex;gap:.5rem;pointer-events:auto}
+.stage-tools button{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tx-lo);padding:.5rem .9rem;border-radius:999px;
+  box-shadow:inset 0 0 0 1px var(--rule);transition:color var(--d-ui) var(--e),box-shadow var(--d-ui) var(--e)}
+.stage-tools button:hover{color:var(--tx-hi);box-shadow:inset 0 0 0 1px var(--rule-hi)}
+.stage-tools button[aria-pressed="true"]{color:var(--void);background:var(--cyan);box-shadow:none}
+
+/* ---------- WORK ROW (catalog entry as an editorial row) ---------- */
+.row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(1.5rem,5vw,5rem);
+  align-items:center;padding-block:clamp(2.5rem,6vw,5rem);border-top:1px solid var(--rule);position:relative}
+.row-media{position:relative;overflow:hidden;aspect-ratio:16/9;background:#020509}
+.row-media img{width:100%;height:100%;object-fit:cover;
+  transition:transform var(--d-cine) var(--e),opacity var(--d-panel) var(--e)}
+.row-media .rv{position:absolute;inset:0;opacity:0;
+  clip-path:inset(0 100% 0 0);transition:clip-path var(--d-cine) var(--e),opacity var(--d-micro) linear}
+.row:hover .row-media .rv,.row:focus-within .row-media .rv{opacity:1;clip-path:inset(0 0 0 0)}
+.row:hover .row-media img,.row:focus-within .row-media img{transform:scale(1.03)}
+
+/* Alternation. Two rows stacked the same way read as a list; flipped,
+   they read as a spread. The reveal wipe flips with them, so the second
+   row opens from the outside edge rather than repeating the first. */
+.row:nth-child(even){grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+.row:nth-child(even) .row-media{grid-column:2;grid-row:1}
+.row:nth-child(even) > :last-child{grid-column:1;grid-row:1}
+.row:nth-child(even) .row-media .rv{clip-path:inset(0 0 0 100%)}
+.row:nth-child(even):hover .row-media .rv,
+.row:nth-child(even):focus-within .row-media .rv{clip-path:inset(0 0 0 0)}
+.row-no{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.24em;color:var(--tx-dim);
+  margin-bottom:1.1rem;display:block}
+.row h3{margin-bottom:.7rem}
+.row p{color:var(--tx-lo);max-width:44ch;margin-bottom:1.5rem}
+.row-facts{display:flex;flex-wrap:wrap;gap:1.75rem;margin-bottom:1.75rem}
+.row-facts dt{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--tx-dim);margin-bottom:.3rem}
+.row-facts dd{font-size:.94rem;color:var(--tx-hi);font-weight:500}
+.row-link::after{content:"";position:absolute;inset:0}
+
+/* ---------- FOOTER ---------- */
+.ftr{border-top:1px solid var(--rule);padding-block:clamp(3.5rem,8vw,6rem) 2rem;position:relative;z-index:2}
+.ftr-top{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;
+  padding-bottom:clamp(2.5rem,6vw,4.5rem)}
+.ftr-say{font-size:clamp(1.6rem,4.4vw,3.2rem);font-weight:900;letter-spacing:-.045em;line-height:.98;
+  color:var(--tx-hi);max-width:16ch}
+.ftr-cols{display:flex;gap:clamp(2rem,6vw,5rem);flex-wrap:wrap}
+.ftr h5{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.22em;text-transform:uppercase;
+  color:var(--tx-dim);margin-bottom:1.1rem}
+.ftr li+li{margin-top:.55rem}
+.ftr li a{font-size:.92rem;color:var(--tx-lo);transition:color var(--d-micro) var(--e)}
+.ftr li a:hover{color:var(--cyan)}
+.ftr-bot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding-top:1.75rem;
+  border-top:1px solid var(--rule);font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--tx-dim)}
+
+/* ============================================================
+   CURSOR — the pointer is the product.
+   Over ordinary content it is a small ring. Over the stage it
+   becomes the Starbloom seed itself, so the thing you drag is
+   the thing doing the revealing.
+   ============================================================ */
+.cur{position:fixed;top:0;left:0;z-index:9500;pointer-events:none;width:34px;height:34px;
+  margin:-17px 0 0 -17px;will-change:transform;opacity:0;
+  transition:opacity var(--d-ui) linear,width var(--d-ui) var(--e-spring),
+             height var(--d-ui) var(--e-spring),margin var(--d-ui) var(--e-spring)}
+.cur.live{opacity:1}
+.cur-ring{position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 1.2px var(--cyan-34);
+  transition:opacity var(--d-ui) var(--e),transform var(--d-ui) var(--e-spring)}
+.cur-seed{position:absolute;inset:0;opacity:0;transform:scale(.3) rotate(-45deg);
+  transition:opacity var(--d-ui) var(--e),transform var(--d-panel) var(--e-spring)}
+.cur-dot{position:fixed;top:0;left:0;z-index:9501;width:4px;height:4px;margin:-2px 0 0 -2px;
+  border-radius:50%;background:var(--light);pointer-events:none;opacity:0;
+  transition:opacity var(--d-ui) linear}
+.cur-dot.live{opacity:1}
+.cur-lbl{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--f-mono);
+  font-size:.48rem;letter-spacing:.14em;color:var(--cyan);opacity:0;pointer-events:none;
+  transition:opacity var(--d-micro) linear;text-shadow:0 0 8px rgba(4,7,13,.9)}
+.cur-lbl:empty{opacity:0 !important}
+
+/* Hovering something interactive: a translucent ring that grows around
+   the target rather than a filled disc, so it never sits on top of the
+   label it is pointing at. */
+.cur.hot{width:58px;height:58px;margin:-29px 0 0 -29px}
+.cur.hot .cur-ring{box-shadow:inset 0 0 0 1.2px var(--cyan);background:rgba(91,220,222,.10)}
+.cur.hot .cur-lbl{opacity:1}
+.cur.hot~.cur-dot{opacity:0}
+
+/* Over the live demo the pointer is removed completely — the Starbloom
+   head is the cursor there. */
+.cur.vanish{opacity:0;transform:scale(.2)}
+.cur.vanish~.cur-dot{opacity:0}
+
+@media (hover:none),(pointer:coarse){.cur,.cur-dot{display:none !important}}
+
+/* ---------- PAGE TRANSITION ---------- */
+#main{position:relative;z-index:2}
+.view{animation:vin var(--d-panel) var(--e) both}
+.view.out{animation:vout var(--d-ui) var(--e-io) both}
+@keyframes vin{from{opacity:0}to{opacity:1}}
+@keyframes vout{to{opacity:0}}
+
+/* ---------- ROUTE TRANSITION ----------
+   Navigation was a 200ms opacity fade — the one moment a visitor hits
+   on every single click, and the most anonymous thing in the build.
+   It now uses the only gesture this site actually owns: two halves
+   closing on a lit seam, then opening again on the new page. Same
+   seam as the hero rift, and closing and opening are different
+   gestures rather than one reversed, so arriving somewhere feels
+   slower than leaving it.
+
+   Two things learned the hard way here:
+
+   1. The container does NOT toggle visibility. A first attempt gated
+      it with visibility:hidden/visible and the close transition came
+      in at roughly half speed — the panels reached 26% of 734px
+      before the content swapped, so the screen was never actually
+      covered and the swap happened in plain sight. The panels simply
+      live off-canvas instead; there is nothing to reveal.
+
+   2. The panels overlap by 2% at the centre. A 50/50 split leaves a
+      one-pixel strip of live page showing down the middle on
+      fractional viewport widths. */
+.xr{position:fixed;inset:0;z-index:8000;pointer-events:none;overflow:hidden}
+.xr i{position:absolute;top:0;bottom:0;display:block}
+.xr.armed i{will-change:transform}
+
+.xr-l,.xr-r{width:51%;
+  background:linear-gradient(180deg,#080E1A 0%,#03060B 55%,#080E1A 100%);
+  transition:transform 420ms cubic-bezier(.62,.02,.28,1)}
+.xr-l{left:0;transform:translate3d(-101%,0,0)}
+.xr-r{right:0;transform:translate3d(101%,0,0)}
+.xr.shut .xr-l,.xr.shut .xr-r{transform:translate3d(0,0,0)}
+
+.xr-seam{left:50%;width:2px;margin-left:-1px;transform-origin:50% 50%;
+  background:linear-gradient(to bottom,transparent,var(--cyan) 16%,var(--light) 50%,var(--gold) 84%,transparent);
+  box-shadow:0 0 26px 5px rgba(91,220,222,.42),0 0 70px 14px rgba(230,188,102,.18);
+  transform:scaleY(0);opacity:0;
+  transition:transform 420ms cubic-bezier(.62,.02,.28,1),opacity 200ms linear}
+.xr.shut .xr-seam{transform:scaleY(1);opacity:1}
+
+.xr.opening .xr-l,.xr.opening .xr-r{transition:transform 620ms var(--e)}
+.xr.opening .xr-seam{transition:transform 320ms var(--e),opacity 280ms linear}
+
+@media (prefers-reduced-motion:reduce){ .xr{display:none} }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:900px){
+  .nav{display:none}
+  .burger{display:flex}
+  .hdr-r .btn-cta{display:none}
+  .row,.row:nth-child(even){grid-template-columns:1fr;gap:1.75rem}
+  .row:nth-child(even) .row-media,.row:nth-child(even) > :last-child{grid-column:1;grid-row:auto}
+  .ftr-top{flex-direction:column}
+}
+@media (max-width:640px){
+  :root{--hdr:64px}
+  .mq-item{gap:1.6rem;padding-inline:.8rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .mq-track{animation:none}
+  .btn:hover,.row:hover .row-media img{transform:none}
+}
+
+/* ============================================================
+   WORK ENTRIES (V4)
+   The two catalog rows were the same object twice: media left,
+   text right, identical facts block. That reads as a template.
+   They are not equal things — one is the studio's original
+   flagship, the other is a study that taught us the engine — so
+   they now get construction that says so.
+   ============================================================ */
+
+/* ---- LEAD : the flagship. Full width, title over the media. ---- */
+.lead{position:relative;margin-block:clamp(2rem,5vw,4rem)}
+.lead-media{position:relative;width:100%;aspect-ratio:21/9;overflow:hidden;background:#020509}
+.lead-media img{width:100%;height:100%;object-fit:cover;object-position:50% 38%;
+  transition:transform var(--d-cine) var(--e)}
+.lead-media .rv{position:absolute;inset:0;opacity:0;clip-path:inset(0 100% 0 0);
+  transition:clip-path var(--d-cine) var(--e),opacity var(--d-micro) linear}
+.lead:hover .rv,.lead:focus-within .rv{opacity:1;clip-path:inset(0 0 0 0)}
+.lead:hover .lead-media img,.lead:focus-within .lead-media img{transform:scale(1.02)}
+.lead-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,rgba(4,7,13,.94) 4%,rgba(4,7,13,.35) 42%,transparent 70%)}
+.lead-over{position:absolute;left:0;right:0;bottom:0;z-index:3;
+  padding:clamp(1.25rem,3vw,2.5rem);display:flex;align-items:flex-end;
+  justify-content:space-between;gap:2rem;flex-wrap:wrap;pointer-events:none}
+.lead-over a{pointer-events:auto}
+.lead-title{font-size:clamp(2rem,5.6vw,4.6rem);font-weight:900;letter-spacing:-.045em;
+  line-height:.9;color:var(--tx-hi)}
+.lead-strip{display:flex;gap:clamp(1.5rem,4vw,3.5rem);flex-wrap:wrap;
+  padding-top:1.1rem;border-top:1px solid var(--rule);margin-top:1.1rem}
+.lead-strip dt{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--tx-dim);margin-bottom:.3rem}
+.lead-strip dd{font-size:.95rem;color:var(--tx-hi);font-weight:500}
+
+/* ---- NOTE : the study. Subordinate, offset, compact. ---- */
+.note-entry{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
+  column-gap:clamp(.7rem,1.5vw,1.4rem);align-items:center;
+  padding-top:clamp(2rem,5vw,3.5rem);border-top:1px solid var(--rule);position:relative}
+.note-txt{grid-column:1/6}
+.note-media{grid-column:7/13;position:relative;aspect-ratio:16/9;overflow:hidden;background:#020509}
+.note-media img{width:100%;height:100%;object-fit:cover;transition:transform var(--d-cine) var(--e)}
+.note-media .rv{position:absolute;inset:0;opacity:0;clip-path:inset(0 100% 0 0);
+  transition:clip-path var(--d-cine) var(--e),opacity var(--d-micro) linear}
+.note-entry:hover .rv,.note-entry:focus-within .rv{opacity:1;clip-path:inset(0 0 0 0)}
+.note-title{font-size:clamp(1.4rem,2.6vw,2rem);font-weight:700;letter-spacing:-.03em;
+  line-height:1;margin-bottom:.7rem;color:var(--tx-hi)}
+.note-facts{display:flex;flex-direction:column;gap:.55rem;margin-block:1.25rem}
+.note-facts div{display:flex;justify-content:space-between;gap:1.5rem;
+  padding-bottom:.55rem;border-bottom:1px solid var(--rule)}
+.note-facts dt{font-family:var(--f-mono);font-size:var(--t-mono);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tx-dim)}
+.note-facts dd{font-size:.9rem;color:var(--tx);text-align:right}
+.entry-link::after{content:"";position:absolute;inset:0}
+
+@media (max-width:900px){
+  .lead-media{aspect-ratio:4/3}
+  .lead-over{padding:1rem;flex-direction:column;align-items:flex-start;gap:.9rem}
+  .lead-title{font-size:clamp(1.7rem,8vw,2.4rem)}
+  .lead-over .btn{font-size:.82rem;padding:.6rem 1.15rem}
+  .lead-media::after{background:linear-gradient(to top,rgba(4,7,13,.95) 8%,rgba(4,7,13,.3) 55%,transparent)}
+  .note-entry{grid-template-columns:1fr;row-gap:1.5rem}
+  .note-txt,.note-media{grid-column:1/-1}
+  .note-media{order:-1}
+}
+@media (prefers-reduced-motion:reduce){
+  .lead:hover .lead-media img{transform:none}
+}
+
+/* the lead label sits on artwork, not on the page ground — it needs its own
+   contrast rather than inheriting the dim page value */
+.lead-over .row-no{color:var(--tx);margin-bottom:.5rem;
+  text-shadow:0 1px 12px rgba(2,5,9,.9)}
+.lead-title{text-shadow:0 2px 26px rgba(2,5,9,.55)}
+
+
+/* Narrow screens turned the stage controls into wrapped circles. Keep each
+   control on one line and let the strip stack instead. */
+@media (max-width:640px){
+  .stage-meta{flex-direction:column;align-items:flex-start;gap:.65rem;
+    padding:.9rem .9rem 1rem}
+  .stage-tools{width:100%;flex-wrap:wrap;gap:.4rem}
+  .stage-tools button{white-space:nowrap;font-size:.58rem;padding:.45rem .75rem;
+    letter-spacing:.1em}
+  .stage-hint{font-size:.58rem;letter-spacing:.16em}
+}

@@ -1,0 +1,20 @@
+name: Verify portfolio source and packages
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate development configuration
+        run: node wallpapers/tools/validate_wallpaper.js wallpapers
+      - name: Test preserved packages and development renderer
+        run: node --test wallpapers/tools/test_config_package_matrix.js wallpapers/tools/test_trail_v2_production.js

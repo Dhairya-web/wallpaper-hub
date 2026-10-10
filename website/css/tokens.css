@@ -1,0 +1,101 @@
+/* ============================================================
+   TOKENS — the only place colour, type and timing are decided.
+   ============================================================ */
+:root{
+  /* Core palette */
+  --void:#04070D;
+  --cyan:#5BDCDE;
+  --gold:#E6BC66;
+  --violet:#8E75D8;
+  --light:#F4F8FC;
+
+  /* Sectional grounds. The first set spanned seven luminance points
+     across four steps, which is below the threshold at which a section
+     change is perceptible at all — the page read as one flat tunnel.
+     These are spaced far enough apart to be felt, and --g4 changes
+     temperature rather than value: a violet-black that ties to the
+     Gear Pi lavender and marks the one section that asks for something
+     (the commission) as a different kind of place. */
+  --g0:#03060B;
+  --g1:#080E1A;
+  --g2:#0D1728;
+  --g3:#122036;
+  --g4:#120E20;
+
+  /* Accent washes */
+  --cyan-08:rgba(91,220,222,.08);
+  --cyan-16:rgba(91,220,222,.16);
+  --cyan-34:rgba(91,220,222,.34);
+  --gold-08:rgba(230,188,102,.08);
+  --gold-16:rgba(230,188,102,.16);
+  --gold-34:rgba(230,188,102,.34);
+
+  /* Text */
+  --tx-hi:#F4F8FC;
+  --tx:#B7C3D4;
+  --tx-lo:#7E8DA3;
+  --tx-dim:#4A576B;
+
+  /* Hairlines — this design uses rules, not boxes */
+  --rule:rgba(244,248,252,.10);
+  --rule-hi:rgba(244,248,252,.22);
+
+  /* Status */
+  --st-live:#5BDCDE;
+  --st-dev:#E6BC66;
+
+  /* Type */
+  --f:'Satoshi','Segoe UI',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,monospace;
+
+  /* Fluid scale — display runs deliberately large */
+  --t-mono:clamp(.62rem,.58rem + .12vw,.72rem);
+  --t-sm:clamp(.86rem,.83rem + .12vw,.94rem);
+  --t-base:clamp(1rem,.96rem + .18vw,1.1rem);
+  --t-lg:clamp(1.05rem,.98rem + .34vw,1.25rem);
+  --t-h3:clamp(1.4rem,1.1rem + 1.3vw,2.1rem);
+  --t-h2:clamp(2.4rem,1.1rem + 6.4vw,7.5rem);
+  /* Two h1 scales, because there are two jobs.
+
+     --t-display is a statement: 145px at 1440, tall enough to own a
+     viewport. It is for a one- or two-word title over a full-bleed
+     image, and nothing else. Letting every page h1 inherit it is how
+     the catalog, journal, studio and commissions pages all ended up
+     louder than the homepage hero.
+
+     --t-h1 is the page scale, matching the hero's ceiling. Floors are
+     tuned so the longest single word still fits 320px, since display
+     type cannot wrap mid-word. */
+  --t-display:clamp(2.1rem,.6rem + 9.4vw,13rem);
+  --t-h1:clamp(2.3rem,.9rem + 6.1vw,7rem);
+
+  /* A chapter heading is not a page heading. --t-h2 is the display
+     clamp — 110px at 1440 — which is correct above a full-bleed image
+     and wrong inside a 616px body column, where it breaks a six-word
+     sentence into four lines with a one-letter orphan. Body chapters
+     use this instead: still large, but sized to its measure. */
+  --t-chap:clamp(1.8rem,.95rem + 2.9vw,3.9rem);
+
+  /* Support copy is deliberately small. A 30px paragraph sitting under
+     an 80px headline reads as filler; small + offset reads as a caption
+     written by someone who decided where it goes. */
+  --t-support:clamp(.86rem,.82rem + .18vw,.98rem);
+
+  /* Space */
+  --gut:clamp(1.15rem,4.2vw,4rem);
+  --sec:clamp(5rem,13vw,12rem);
+  --wrap:1440px;
+  --hdr:74px;
+
+  /* MOTION — one signature curve, a spring for arrivals,
+     and durations that climb from micro to cinematic. */
+  --e:cubic-bezier(.16,1,.3,1);
+  --e-spring:cubic-bezier(.22,1.4,.36,1);
+  --e-io:cubic-bezier(.7,0,.2,1);
+
+  --d-micro:160ms;
+  --d-ui:320ms;
+  --d-panel:620ms;
+  --d-scene:1100ms;
+  --d-cine:1600ms;
+}

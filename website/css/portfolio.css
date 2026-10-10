@@ -1,0 +1,5 @@
+.portfolio-note{position:fixed;z-index:10000;bottom:14px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 16px;padding:10px 16px;border:1px solid #334752;border-radius:8px;background:rgba(4,7,13,.96);color:#dce6ed;font:12px/1.4 system-ui,sans-serif;box-shadow:0 4px 24px #0006;text-align:center}
+.portfolio-note a{color:#88e4e6;text-decoration:underline;text-underline-offset:3px}
+.portfolio-note strong{font-weight:600}
+body{padding-bottom:84px}
+@media(max-width:600px){.portfolio-note{bottom:8px;font-size:11px;padding:8px 10px}.portfolio-note span{flex-basis:100%}body{padding-bottom:110px}}

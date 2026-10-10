@@ -1,0 +1,21 @@
+{
+  "AppVersion": "1.0.0.0",
+  "Title": "One Piece - Gear 5",
+  "Thumbnail": "assets/images/base.webp",
+  "Preview": null,
+  "Desc": "Interactive Anime wallpaper with themed cursor trails.",
+  "Author": "Dhairya Lukha",
+  "License": null,
+  "Contact": "",
+  "Type": 1,
+  "FileName": "index.html",
+  "Arguments": null,
+  "IsAbsolutePath": false,
+  "Id": "luffy-gear5",
+  "Tags": [
+    "Anime",
+    "Interactive",
+    "Cursor Trail"
+  ],
+  "Version": 1
+}

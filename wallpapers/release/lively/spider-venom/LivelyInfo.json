@@ -1,0 +1,21 @@
+{
+  "AppVersion": "1.0.0.0",
+  "Title": "Marvel - Symbiote",
+  "Thumbnail": "assets/images/base.webp",
+  "Preview": null,
+  "Desc": "Interactive Comics wallpaper with themed cursor trails.",
+  "Author": "Dhairya Lukha",
+  "License": null,
+  "Contact": "",
+  "Type": 1,
+  "FileName": "index.html",
+  "Arguments": null,
+  "IsAbsolutePath": false,
+  "Id": "spider-venom",
+  "Tags": [
+    "Comics",
+    "Interactive",
+    "Cursor Trail"
+  ],
+  "Version": 1
+}

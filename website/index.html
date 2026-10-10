@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Wallpaper Hub — Portfolio by Dhairya Lukha</title>
+<meta name="description" content="Dhairya Lukha's AI-assisted interactive wallpaper project. A frontend portfolio prototype, not a live store.">
+<meta name="theme-color" content="#04070D">
+<meta name="color-scheme" content="dark">
+
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
+
+<link rel="preload" as="image" href="assets/derived/aeren-sol-base-1920.webp"
+      imagesrcset="assets/derived/aeren-sol-base-1280.webp 1280w, assets/derived/aeren-sol-base-1920.webp 1920w, assets/derived/aeren-sol-base-2560.webp 2560w">
+
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/views.css">
+<link rel="stylesheet" href="css/portfolio.css">
+</head>
+<body>
+<aside class="portfolio-note" aria-label="Portfolio context">
+  <strong>Dhairya Lukha · AI-assisted project</strong>
+  <span>Frontend prototype. No orders, payments or form submissions.</span>
+  <a href="https://github.com/Dhairya-web/wallpaper-hub">Project &amp; my role ↗</a>
+</aside>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="veil" id="veil">
+  <div class="veil-in">
+    <svg class="veil-seed" viewBox="-2 -2 4 4" aria-hidden="true">
+      <path d="M0-1.4C.15-.4.4-.15 1.4 0 .4.15.15.4 0 1.4-.15.4-.4.15-1.4 0-.4-.15-.15-.4 0-1.4Z" fill="#5BDCDE"/>
+    </svg>
+    <span class="veil-txt">WALLPAPER HUB</span>
+  </div>
+</div>
+
+<div class="field" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+<!-- Route transition. The site's whole idea is a scene that opens
+     along a seam, so navigation opens along one too. -->
+<div class="xr" id="xr" aria-hidden="true">
+  <i class="xr-l"></i><i class="xr-r"></i><i class="xr-seam"></i>
+</div>
+
+<div id="hdr"></div>
+<main id="main" tabindex="-1"></main>
+<div id="ftr"></div>
+
+<noscript><div style="padding:5rem 1.5rem;text-align:center;color:#F4F8FC">
+  <h2>Wallpaper Hub</h2><p style="color:#8A99AE">This experience composites interactive artwork and needs JavaScript.</p>
+</div></noscript>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
